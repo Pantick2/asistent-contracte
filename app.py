@@ -5,7 +5,7 @@ import docx
 import pypdf
 
 # =====================================================================
-# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚEXCLUSIVĂ)
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
 SEMNATURA_OBLIGATORIE = "PROPRIETATE_INTELECTUALA_IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
 
@@ -21,7 +21,7 @@ def verifica_integritate_cod():
 verifica_integritate_cod()
 
 # =====================================================================
-# CONFIGURARE PAGINĂ ȘI VARIABILE GLOBAL
+# CONFIGURARE PAGINĂ ȘI VARIABILE GLOBALE
 # =====================================================================
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
@@ -104,7 +104,7 @@ lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], f
 t = TEXTS[lang]
 
 # =====================================================================
-# FUNCȚII PAGINI IZOLATE (REZOLVĂ ERORILE DE COMPILARE)
+# FUNCȚII PAGINI IZOLATE
 # =====================================================================
 def randeaza_pagina_analiza():
     st.title(t["title"])
@@ -137,6 +137,8 @@ def randeaza_pagina_analiza():
     text_manual = st.text_area(t["text_label"], height=150)
 
     contract_final_text = ""
+    
+    # RECONSTRUCȚIE SECȚIUNE CITIRE FIȘIERE - STRICT LINIARĂ ȘI DREAPTĂ
     if uploaded_file is not None:
-        nume_fisier = uploaded_file.name.lower()
-        if nume_fisier.endswith(".pdf"):
+        extensie = uploaded_file.name.lower()
+        if ".pdf" in extensie:
