@@ -29,7 +29,7 @@ st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄"
 st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
-CHEIE_API_DEMO = "AICI_PUI_CHEIA_TA_GEMINI" 
+CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
 if "numar_utilizari" not in st.session_state:
