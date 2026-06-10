@@ -7,12 +7,13 @@ import pypdf
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
-SEMNATURA_OBLIGATORIE = "PROPRIETATE_INTELECTUALA_IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
+SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
 
 def verifica_integritate_cod():
     try:
         with open(__file__, "r", encoding="utf-8") as f:
-            if f.read().count(SEMNATURA_OBLIGATORIE) < 1:
+            # Verificare simplificată și permisivă pentru editările pe telefon
+            if f.read().count("IULIAN_ICHIM_UNGUREANU") < 1:
                 st.error("❌ EROARE: Licență invalidă sau cod modificat.")
                 st.stop()
     except Exception:
@@ -28,6 +29,7 @@ st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄"
 st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
+# ⚠️ PUNE CHEIA TA REALĂ ÎNTRE GHILIMELELE DE MAI JOS:
 CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
@@ -83,7 +85,7 @@ TEXTS = {
         "card1_title": "💡 Guidance Guide", "card1_desc": "Translates tangled legal clauses into simple ideas.",
         "card2_title": "🚩 Hidden Clauses Alert", "card2_desc": "Flags disproportionate penalties or payment terms.",
         "card3_title": "🗣️ Negotiation Ideas", "card3_desc": "Gives you polite yet firm arguments and scripts to propose contract changes.",
-        "prompt_instruction": "You are a legal expert specialized in protecting freelancers. Analyze the provided contract text and identify major risks. Respond STRICTLY in ENGLISH. Return the result in Markdown format, with the following structure for each problem found:\n### 🚩 [Risk Name]\n- **Original Clause:** [Text]\n- **Plain English Translation:** [Meaning]\n- **Why it is dangerous:** [Risk]\n- **Negotiation Suggestion:** [Suggestion]"
+        "prompt_instruction": "You are a legal expert specialized in pointing out high-risk contract terms for freelance professionals. Analyze the contract and outline responses in English. Return Markdown."
     }
 }
 
@@ -104,7 +106,7 @@ lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], f
 t = TEXTS[lang]
 
 # =====================================================================
-# FUNCȚII EXTRAGERE TEXT (FĂRĂ RELE INDENTĂRI)
+# FUNCȚII EXTRAGERE TEXT
 # =====================================================================
 def citeste_contract_pdf(file_obj):
     txt_acumulat = ""
@@ -144,3 +146,6 @@ def randeaza_pagina_analiza():
     if api_cheie_utilizator.strip():
         cheie_finala = api_cheie_utilizator
         foloseste_mod_demo = False
+        st.sidebar.success("Cheie personală activă.")
+    else:
+        cheie_finala = CHEIE_API_DEMO
