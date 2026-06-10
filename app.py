@@ -5,7 +5,7 @@ import docx
 import pypdf
 
 # =====================================================================
-# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚEXCLUSIVĂ)
 # =====================================================================
 SEMNATURA_OBLIGATORIE = "PROPRIETATE_INTELECTUALA_IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
 
@@ -21,14 +21,13 @@ def verifica_integritate_cod():
 verifica_integritate_cod()
 
 # =====================================================================
-# CONFIGURARE PAGINĂ ȘI VARIABILE
+# CONFIGURARE PAGINĂ ȘI VARIABILE GLOBAL
 # =====================================================================
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
 st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
-# ⚠️ PUNE CHEIA TA REALĂ ÎNTRE GHILIMELELE DE MAI JOS:
 CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
@@ -59,7 +58,7 @@ TEXTS = {
         "card1_title": "💡 Ghid de Îndrumare", "card1_desc": "Traduce clauzele contractuale încâlcite în idei simple, ca să înțelegi exact ce ți se cere.",
         "card2_title": "🚩 Alertă Clauze Ascunse", "card2_desc": "Semnalează penalitățile disproporționate sau termenele de plată care te-ar putea dezavantaja.",
         "card3_title": "🗣️ Idei de Renegociere", "card3_desc": "Îți oferă argumente și formulări politicoase pentru a propune modificări de la egal la egal.",
-        "prompt_instruction": "Ești un expert juridic specializat în protecția freelancerilor. Analizează textul contractului oferit și identifică risqual_riscuri majore (penalități disproporționate, proprietate intelectuală abuzivă, termene de plată nerealiste, clauze de exclusivitate ascunse, reziliere unilaterală defavorabilă). Răspunde STRICT în limba ROMÂNĂ. Returnează rezultatul în format Markdown, cu următoarea structură pentru fiecare problemă găsită:\n### 🚩 [Numele Riscului]\n- **Clauza originală:** [Textul din contract]\n- **Traducere pe înțelesul tuturor:** [Ce înseamnă de fapt în limbaj simplu]\n- **De ce este periculoasă:** [Riscul real pentru freelancer]\n- **Sugestie de renegociere:** [Cum să reformuleze sau ce contra-argument să folosească]"
+        "prompt_instruction": "Ești un expert juridic specializat în protecția freelancerilor. Analizează textul contractului oferit și identifică riscurile majore (penalități disproporționate, proprietate intelectuală abuzivă, termene de plată nerealiste, clauze de exclusivitate ascunse, reziliere unilaterală defavorabilă). Răspunde STRICT în limba ROMÂNĂ. Returnează rezultatul în format Markdown, cu următoarea structură pentru fiecare problemă găsită:\n### 🚩 [Numele Riscului]\n- **Clauza originală:** [Textul din contract]\n- **Traducere pe înțelesul tuturor:** [Ce înseamnă de fapt în limbaj simplu]\n- **De ce este periculoasă:** [Riscul real pentru freelancer]\n- **Sugestie de renegociere:** [Cum să reformuleze sau ce contra-argument să folosească]"
     },
     "en": {
         "title": "📄 Freelancer Contract Assistant",
@@ -89,23 +88,25 @@ TEXTS = {
 }
 
 # =====================================================================
-# BARA LATERALĂ DE NAVIGARE
+# BARA LATERALĂ DE NAVIGARE (SIDEBAR)
 # =====================================================================
 st.sidebar.markdown("<h2 style='text-align: center; color: #0284c7;'>🛡️ Asistent Scut</h2>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
-# Definim clar opțiunile de pagini
-OPTIUNI_PAGINI = ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"]
+PAGINA_ANALIZA = "Aplicație Analiză"
+PAGINA_FEEDBACK = "Feedback & Contact"
+PAGINA_TERMENI = "Termeni și Condiții"
+PAGINA_CONFIDENTIALITATE = "Politică de Confidențialitate"
 
-pagina_curenta = st.sidebar.radio("Navigare pagini:", OPTIUNI_PAGINI)
+pagina_curenta = st.sidebar.radio("Navigare pagini:", [PAGINA_ANALIZA, PAGINA_FEEDBACK, PAGINA_TERMENI, PAGINA_CONFIDENTIALITATE])
 st.sidebar.markdown("---")
 lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], format_func=lambda x: "🇷🇴 Română" if x == "ro" else "🇺🇸 English")
 t = TEXTS[lang]
 
 # =====================================================================
-# LOGICĂ PAGINI
+# FUNCȚII PAGINI IZOLATE (REZOLVĂ ERORILE DE COMPILARE)
 # =====================================================================
-if pagina_curenta == "Aplicație Analiză":
+def randeaza_pagina_analiza():
     st.title(t["title"])
     st.markdown(f"<p style='font-size:18px; color:#475569;'>{t['subtitle']}</p>", unsafe_allow_html=True)
     
@@ -136,8 +137,6 @@ if pagina_curenta == "Aplicație Analiză":
     text_manual = st.text_area(t["text_label"], height=150)
 
     contract_final_text = ""
-    
     if uploaded_file is not None:
         nume_fisier = uploaded_file.name.lower()
         if nume_fisier.endswith(".pdf"):
-            pdf_reader = pypdf.PdfReader(uploaded_file)
