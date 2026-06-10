@@ -22,7 +22,7 @@ def verifica_integritate_cod():
 verifica_integritate_cod()
 
 # =====================================================================
-# CONFIGURARE PAGINĂ ȘI DEFINIRE VARIABILE
+# CONFIGURARE PAGINĂ ȘI VARIABILE
 # =====================================================================
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
@@ -132,8 +132,9 @@ if pagina_curenta == "Aplicație Analiză":
     text_manual = st.text_area(t["text_label"], height=150)
 
     contract_final_text = ""
-    if uploaded_file is not None:
-        if uploaded_file.name.endswith(".pdf"):
-            reader = pypdf.PdfReader(uploaded_file)
-            contract_final_text = "".join([page.extract_text() for page in reader.pages])
-        elif uploaded_file.name.endswith(".docx"):
+    
+    # LOGICĂ LINIARĂ DE CITIRE FIȘIERE (Evită erorile de indentare)
+    if uploaded_file is not None and uploaded_file.name.endswith(".pdf"):
+        try:
+            contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
+        except Exception: pass
