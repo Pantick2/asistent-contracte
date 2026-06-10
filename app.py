@@ -1,8 +1,8 @@
 import streamlit as st
 from google import genai
 from google.genai import types
-import docx  # Pentru citirea fișierelor Word (pip install python-docx)
-import pypdf  # Pentru citirea fișierelor PDF (pip install pypdf)
+import docx
+import pypdf
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
@@ -11,44 +11,25 @@ SEMNATURA_OBLIGATORIE = "PROPRIETATE_INTELECTUALA_IULIAN_ICHIM_UNGUREANU_ALIAS_P
 
 def verifica_integritate_cod():
     try:
-        cale_fisier = __file__
-        with open(cale_fisier, "r", encoding="utf-8") as f:
-            continut_cod = f.read()
-        if continut_cod.count(SEMNATURA_OBLIGATORIE) < 2:
-            st.error("❌ EROARE CRITICĂ: Licență invalidă sau cod modificat neautorizat.")
-            st.warning("Această aplicație aparține de drept lui IULIAN ICHIM-UNGUREANU (Pantick). Accesul este blocat.")
-            st.stop()
+        with open(__file__, "r", encoding="utf-8") as f:
+            if f.read().count(SEMNATURA_OBLIGATORIE) < 2:
+                st.error("❌ EROARE: Licență invalidă sau cod modificat.")
+                st.stop()
     except Exception:
-        st.error("❌ Eroare de sistem la verificarea licenței de autor.")
+        st.error("❌ Eroare verificare licență.")
         st.stop()
 
 verifica_integritate_cod()
+
 # =====================================================================
+# CONFIGURARE PAGINĂ ȘI DEFINIRE VARIABILE
+# =====================================================================
+st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-st.set_page_config(
-    page_title="Asistent Contracte Freelanceri", 
-    page_icon="📄", 
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
+.feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
-st.markdown("""
-    <style>
-        html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
-        .feature-card {
-            background-color: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 5px solid #0284c7;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .feature-title { color: #0f172a; font-weight: 600; margin-bottom: 5px; font-size: 16px; }
-        .feature-desc { color: #475569; font-size: 14px; line-height: 1.5; }
-    </style>
-""", unsafe_allow_html=True)
-
-CHEIE_API_DEMO = "gen-lang-client-0040445167" 
+CHEIE_API_DEMO = "AICI_PUI_CHEIA_TA_GEMINI" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
 if "numar_utilizari" not in st.session_state:
@@ -72,43 +53,24 @@ TEXTS = {
         "success": "Analiză finalizată cu succes!",
         "result_header": "🔍 Raport de Audit Contractual și Contra-argumente",
         "btn_download": "Descarcă Raportul de Negociere (.txt)",
-        "welcome_disclaimer": (
-            "💡 **Cum folosim acest instrument:** Acest site funcționează ca un **copilot de negociere** pentru a te ajuta să înțelegi jargonul comercial. "
-            "Informațiile generate sunt **strict orientative și de îndrumare**. Acest instrument NU oferă asistență juridică sau consultanță de avocat. "
-            "Aplicația aplică o politică de **zero stocare**: textul tău este procesat instant și se șterge automat când închizi pagina. "
-            "📋 *Vă rugăm să verificați „Termenii și Condițiile” și „Politica de Confidențialitate” din meniul lateral pentru mai multe detalii.*"
-        ),
+        "welcome_disclaimer": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un **copilot de negociere**. Informațiile generate sunt **strict orientative**. Acest instrument NU oferă asistență juridică sau consultanță de avocat. Aplicația aplică o politică de **zero stocare**. 📋 *Vă rugăm să verificați „Termenii și Condițiile” și „Politica de Confidențialitate” din meniul lateral pentru mai multe detalii.*",
         "gdpr_text": "🔒 **Securitate & Disclaimer:** Conținutul documentelor nu este stocat sau folosit pentru antrenarea modelelor publice. Această analiză automată are rol informativ și nu înlocuiește sfatul unui avocat.",
         "gdpr_checkbox": "Am citit, înțeleg și sunt de acord cu Termenii, Condițiile și procesarea datelor în conformitate cu GDPR.",
-        "card1_title": "💡 Ghid de Îndrumare",
-        "card1_desc": "Traduce clauzele contractuale încâlcite în idei simple, ca să înțelegi exact ce ți se cere.",
-        "card2_title": "🚩 Alertă Clauze Ascunse",
-        "card2_desc": "Semnalează penalitățile disproporționate sau termenele de plată care te-ar putea dezavantaja.",
-        "card3_title": "🗣️ Idei de Renegociere",
-        "card3_desc": "Îți oferă argumente și formulări politicoase pentru a propune modificări de la egal la egal.",
-        "prompt_instruction": (
-            "Ești un expert juridic specializat în protecția freelancerilor. "
-            "Analizează textul contractului oferit și identifică riscurile majore (penalități disproporționate, "
-            "proprietate intelectuală abuzivă, termene de plată nerealiste, clauze de exclusivitate ascunse, reziliere unilaterală defavorabilă). "
-            "Răspunde STRICT în limba ROMÂNĂ. "
-            "Returnează rezultatul în format Markdown, cu următoarea structură pentru fiecare problemă găsită:\n"
-            "### 🚩 [Numele Riscului]\n"
-            "- **Clauza originală:** [Textul din contract]\n"
-            "- **Traducere pe înțelesul tuturor:** [Ce înseamnă de fapt în limbaj simplu]\n"
-            "- **De ce este periculoasă:** [Riscul real pentru freelancer]\n"
-            "- **Sugestie de renegociere:** [Cum să reformuleze sau ce contra-argument să folosească]"
-        )
+        "card1_title": "💡 Ghid de Îndrumare", "card1_desc": "Traduce clauzele contractuale încâlcite în idei simple, ca să înțelegi exact ce ți se cere.",
+        "card2_title": "🚩 Alertă Clauze Ascunse", "card2_desc": "Semnalează penalitățile disproporționate sau termenele de plată care te-ar putea dezavantaja.",
+        "card3_title": "🗣️ Idei de Renegociere", "card3_desc": "Îți oferă argumente și formulări politicoase pentru a propune modificări de la egal la egal.",
+        "prompt_instruction": "Ești un expert juridic specializat în protecția freelancerilor. Analizează textul contractului oferit și identifică riscurile majore (penalități disproporționate, proprietate intelectuală abuzivă, termene de plată nerealiste, clauze de exclusivitate ascunse, reziliere unilaterală defavorabilă). Răspunde STRICT în limba ROMÂNĂ. Returnează rezultatul în format Markdown, cu următoarea structură pentru fiecare problemă găsită:\n### 🚩 [Numele Riscului]\n- **Clauza originală:** [Textul din contract]\n- **Traducere pe înțelesul tuturor:** [Ce înseamnă de fapt în limbaj simplu]\n- **De ce este periculoasă:** [Riscul real pentru freelancer]\n- **Sugestie de renegociere:** [Cum să reformuleze sau ce contra-argument să folosească]"
     },
     "en": {
-        "title": "📄 Freelancer Contract Negotiation Assistant",
+        "title": "📄 Freelancer Contract Assistant",
         "subtitle": "Protect your business. Spot hidden unfair clauses and negotiate like a pro.",
         "sidebar_lang": "Language / Limba interfeței:",
         "sidebar_api": "Personal Gemini API Key:",
         "api_info": f"DEMO mode active ({LIMITA_UTILIZARI_GRATUITE} free analyses).",
         "limit_reached_msg": "⚠️ Demo limit reached!",
-        "limit_instructions": "To keep using this tool for free, generate your own API key in Google AI Studio. It takes under a minute.",
+        "limit_instructions": "To keep using this tool for free, generate your own API key in Google AI Studio.",
         "btn_get_key": "🚀 Get your free key here",
-        "file_label": "Drag and drop your contract (PDF, DOCX, TXT):",
+        "file_label": "Upload your contract (PDF, DOCX, TXT):",
         "text_label": "Or paste the suspicious clauses here:",
         "btn_analyze": "Start Smart Analysis",
         "err_no_text": "Please upload a file or paste contract text.",
@@ -116,49 +78,62 @@ TEXTS = {
         "success": "Analysis completed successfully!",
         "result_header": "🔍 Contract Audit Report & Counter-arguments",
         "btn_download": "Download Negotiation Report (.txt)",
-        "welcome_disclaimer": (
-            "💡 **How to use this tool:** This site acts as a **negotiation copilot** to help you understand business jargon. "
-            "The generated insights are **strictly for guidance and educational purposes**. This tool DOES NOT provide legal advice or attorney services. "
-            "The app enforces a **zero-storage policy**: your text is processed instantly and deleted automatically when you close the page. "
-            "📋 *Please review the \"Terms and Conditions\" and \"Privacy Policy\" in the sidebar for more details.*"
-        ),
+        "welcome_disclaimer": "💡 **How to use this tool:** This site acts as a **negotiation copilot**. The insights are **strictly for guidance**. This tool DOES NOT provide legal advice. The app enforces a **zero-storage policy**. 📋 *Please review the \"Terms and Conditions\" and \"Privacy Policy\" in the sidebar.*",
         "gdpr_text": "🔒 **Security & Disclaimer:** Document contents are not stored or used to train public models. This automated analysis is informative and does not replace the advice of a lawyer.",
         "gdpr_checkbox": "I have read, understood, and agree to the Terms, Conditions, and data processing in accordance with GDPR.",
-        "card1_title": "💡 Guidance Guide",
-        "card1_desc": "Translates tangled legal clauses into simple ideas, so you understand exactly what is asked of you.",
-        "card2_title": "🚩 Hidden Clauses Alert",
-        "card2_desc": "Flags disproportionate penalties or payment terms that could put you at a disadvantage.",
-        "card3_title": "🗣️ Negotiation Ideas",
-        "card3_desc": "Gives you polite yet firm arguments and scripts to propose contract changes as an equal partner.",
-        "prompt_instruction": (
-            "You are a legal expert specialized in protecting freelancers. "
-            "Analyze the provided contract text and identify major risks (disproportionate penalties, "
-            "unfair intellectual property clauses, unrealistic payment terms, hidden exclusivity clauses, unfavorable unilateral termination). "
-            "Respond STRICTLY in ENGLISH. "
-            "Return the result in Markdown format, with the following structure for each problem found:\n"
-            "### 🚩 [Risk Name]\n"
-            "- **Original Clause:** [Text from the contract]\n"
-            "- **Plain English Translation:** [What it actually means in simple terms]\n"
-            "- **Why it is dangerous:** [The real risk for the freelancer]\n"
-            "- **Negotiation Suggestion:** [How to rephrase it or what counter-argument to use]"
-        )
+        "card1_title": "💡 Guidance Guide", "card1_desc": "Translates tangled legal clauses into simple ideas.",
+        "card2_title": "🚩 Hidden Clauses Alert", "card2_desc": "Flags disproportionate penalties or payment terms.",
+        "card3_title": "🗣️ Negotiation Ideas", "card3_desc": "Gives you polite yet firm arguments and scripts to propose contract changes.",
+        "prompt_instruction": "You are a legal expert specialized in protecting freelancers. Analyze the provided contract text and identify major risks. Respond STRICTLY in ENGLISH. Return the result in Markdown format, with the following structure for each problem found:\n### 🚩 [Risk Name]\n- **Original Clause:** [Text]\n- **Plain English Translation:** [Meaning]\n- **Why it is dangerous:** [Risk]\n- **Negotiation Suggestion:** [Suggestion]"
     }
 }
 
+# =====================================================================
+# BARA LATERALĂ DE NAVIGARE
+# =====================================================================
 st.sidebar.markdown("<h2 style='text-align: center; color: #0284c7;'>🛡️ Asistent Scut</h2>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
-
-pagina_curenta = st.sidebar.radio(
-    "Navigare pagini:",
-    ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"]
-)
-
+pagina_curenta = st.sidebar.radio("Navigare pagini:", ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"])
 st.sidebar.markdown("---")
 lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], format_func=lambda x: "🇷🇴 Română" if x == "ro" else "🇺🇸 English")
 t = TEXTS[lang]
 
+# =====================================================================
+# LOGICĂ PAGINI
+# =====================================================================
 if pagina_curenta == "Aplicație Analiză":
     st.title(t["title"])
-    st.markdown(f"<p style='font-size:18px; color:#475569; margin-bottom:30px;'>{t['subtitle']}</p>", unsafe_allow_html=True)
-
+    st.markdown(f"<p style='font-size:18px; color:#475569;'>{t['subtitle']}</p>", unsafe_allow_html=True)
+    
     if "rezultat_analiza" not in st.session_state:
+        st.info(t["welcome_disclaimer"])
+        col1, col2, col3 = st.columns(3)
+        with col1: st.markdown(f"<div class='feature-card'><b>{t['card1_title']}</b><br>{t['card1_desc']}</div>", unsafe_allow_html=True)
+        with col2: st.markdown(f"<div class='feature-card'><b>{t['card2_title']}</b><br>{t['card2_desc']}</div>", unsafe_allow_html=True)
+        with col3: st.markdown(f"<div class='feature-card'><b>{t['card3_title']}</b><br>{t['card3_desc']}</div>", unsafe_allow_html=True)
+
+    api_cheie_utilizator = st.sidebar.text_input(t["sidebar_api"], type="password")
+    foloseste_mod_demo = True
+    cheie_finala = None
+
+    if api_cheie_utilizator.strip():
+        cheie_finala = api_cheie_utilizator
+        foloseste_mod_demo = False
+        st.sidebar.success("Cheie personală activă.")
+    else:
+        cheie_finala = CHEIE_API_DEMO
+        st.sidebar.info(f"{t['api_info']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE})")
+
+    client = None
+    if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
+        client = genai.Client(api_key=cheie_finala)
+
+    uploaded_file = st.file_uploader(t["file_label"], type=["pdf", "docx", "txt"])
+    text_manual = st.text_area(t["text_label"], height=150)
+
+    contract_final_text = ""
+    if uploaded_file is not None:
+        if uploaded_file.name.endswith(".pdf"):
+            reader = pypdf.PdfReader(uploaded_file)
+            contract_final_text = "".join([page.extract_text() for page in reader.pages])
+        elif uploaded_file.name.endswith(".docx"):
