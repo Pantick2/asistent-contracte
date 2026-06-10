@@ -5,7 +5,7 @@ import docx  # Pentru citirea fișierelor Word (pip install python-docx)
 import pypdf  # Pentru citirea fișierelor PDF (pip install pypdf)
 
 # =====================================================================
-# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVEX)
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
 SEMNATURA_OBLIGATORIE = "PROPRIETATE_INTELECTUALA_IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
 
@@ -68,7 +68,7 @@ st.markdown("""
 # =====================================================================
 # CONFIGURARE LOGICĂ DE MONETIZARE ȘI CONTORIZARE DEMO
 # =====================================================================
-CHEIE_API_DEMO = "AICI_PUI_CHEIA_TA_GEMINI" 
+CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
 if "numar_utilizari" not in st.session_state:
@@ -162,4 +162,3 @@ TEXTS = {
             "### 🚩 [Risk Name]\n"
             "- **Original Clause:** [Text from the contract]\n"
             "- **Plain English Translation:** [What it actually means in simple terms]\n"
-            "- **Why it is dangerous:** [The real risk for the freelancer]\n"
