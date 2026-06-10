@@ -48,7 +48,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-CHEIE_API_DEMO = "AICI_PUI_CHEIA_TA_GEMINI" 
+CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
 if "numar_utilizari" not in st.session_state:
