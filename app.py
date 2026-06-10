@@ -12,7 +12,6 @@ SEMNATURA_OBLIGATORIE = "PROPRIETATE_INTELECTUALA_IULIAN_ICHIM_UNGUREANU_ALIAS_P
 def verifica_integritate_cod():
     try:
         with open(__file__, "r", encoding="utf-8") as f:
-            # Am ajustat verificarea la < 1 pentru a fi mai permisivă cu editările tale pe telefon
             if f.read().count(SEMNATURA_OBLIGATORIE) < 1:
                 st.error("❌ EROARE: Licență invalidă sau cod modificat.")
                 st.stop()
@@ -134,5 +133,8 @@ if pagina_curenta == "Aplicație Analiză":
 
     contract_final_text = ""
     
-    if uploaded_file is not None and uploaded_file.name.endswith(".pdf"):
-        try: contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
+    # STRUCTURĂ ULTRA-SIMPLIFICATĂ FĂRĂ BLOCURI TRY-EXCEPT PROBLEMATICE
+    if uploaded_file is not None:
+        nume_fisier = uploaded_file.name.lower()
+        if nume_fisier.endswith(".pdf"):
+            pdf_reader = pypdf.PdfReader(uploaded_file)
