@@ -104,41 +104,43 @@ lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], f
 t = TEXTS[lang]
 
 # =====================================================================
+# FUNCȚII EXTRAGERE TEXT (FĂRĂ RELE INDENTĂRI)
+# =====================================================================
+def citeste_contract_pdf(file_obj):
+    txt_acumulat = ""
+    try:
+        pdf_rd = pypdf.PdfReader(file_obj)
+        for p in pdf_rd.pages:
+            txt_acumulat += p.extract_text() or ""
+    except Exception:
+        pass
+    return txt_acumulat
+
+def citeste_contract_docx(file_obj):
+    txt_acumulat = ""
+    try:
+        doc_rd = docx.Document(file_obj)
+        for pr in doc_rd.paragraphs:
+            txt_acumulat += pr.text + "\n"
+    except Exception:
+        pass
+    return txt_acumulat
+
+# =====================================================================
 # FUNCȚII PAGINI IZOLATE
 # =====================================================================
 def randeaza_pagina_analiza():
     st.title(t["title"])
     st.markdown(f"<p style='font-size:18px; color:#475569;'>{t['subtitle']}</p>", unsafe_allow_html=True)
-    
     if "rezultat_analiza" not in st.session_state:
         st.info(t["welcome_disclaimer"])
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='feature-card'><b>{t['card1_title']}</b><br>{t['card1_desc']}</div>", unsafe_allow_html=True)
         with col2: st.markdown(f"<div class='feature-card'><b>{t['card2_title']}</b><br>{t['card2_desc']}</div>", unsafe_allow_html=True)
         with col3: st.markdown(f"<div class='feature-card'><b>{t['card3_title']}</b><br>{t['card3_desc']}</div>", unsafe_allow_html=True)
-
     api_cheie_utilizator = st.sidebar.text_input(t["sidebar_api"], type="password")
     foloseste_mod_demo = True
     cheie_finala = None
-
     if api_cheie_utilizator.strip():
         cheie_finala = api_cheie_utilizator
         foloseste_mod_demo = False
-        st.sidebar.success("Cheie personală activă.")
-    else:
-        cheie_finala = CHEIE_API_DEMO
-        st.sidebar.info(f"{t['api_info']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE})")
-
-    client = None
-    if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
-        client = genai.Client(api_key=cheie_finala)
-
-    uploaded_file = st.file_uploader(t["file_label"], type=["pdf", "docx", "txt"])
-    text_manual = st.text_area(t["text_label"], height=150)
-
-    contract_final_text = ""
-    
-    # RECONSTRUCȚIE SECȚIUNE CITIRE FIȘIERE - STRICT LINIARĂ ȘI DREAPTĂ
-    if uploaded_file is not None:
-        extensie = uploaded_file.name.lower()
-        if ".pdf" in extensie:
