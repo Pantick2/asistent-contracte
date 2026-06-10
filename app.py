@@ -59,7 +59,7 @@ TEXTS = {
         "card1_title": "💡 Ghid de Îndrumare", "card1_desc": "Traduce clauzele contractuale încâlcite în idei simple, ca să înțelegi exact ce ți se cere.",
         "card2_title": "🚩 Alertă Clauze Ascunse", "card2_desc": "Semnalează penalitățile disproporționate sau termenele de plată care te-ar putea dezavantaja.",
         "card3_title": "🗣️ Idei de Renegociere", "card3_desc": "Îți oferă argumente și formulări politicoase pentru a propune modificări de la egal la egal.",
-        "prompt_instruction": "Ești un expert juridic specializat în protecția freelancerilor. Analizează textul contractului oferit și identifică riscurile majore (penalități disproporționate, proprietate intelectuală abuzivă, termene de plată nerealiste, clauze de exclusivitate ascunse, reziliere unilaterală defavorabilă). Răspunde STRICT în limba ROMÂNĂ. Returnează rezultatul în format Markdown, cu următoarea structură pentru fiecare problemă găsită:\n### 🚩 [Numele Riscului]\n- **Clauza originală:** [Textul din contract]\n- **Traducere pe înțelesul tuturor:** [Ce înseamnă de fapt în limbaj simplu]\n- **De ce este periculoasă:** [Riscul real pentru freelancer]\n- **Sugestie de renegociere:** [Cum să reformuleze sau ce contra-argument să folosească]"
+        "prompt_instruction": "Ești un expert juridic specializat în protecția freelancerilor. Analizează textul contractului oferit și identifică risqual_riscuri majore (penalități disproporționate, proprietate intelectuală abuzivă, termene de plată nerealiste, clauze de exclusivitate ascunse, reziliere unilaterală defavorabilă). Răspunde STRICT în limba ROMÂNĂ. Returnează rezultatul în format Markdown, cu următoarea structură pentru fiecare problemă găsită:\n### 🚩 [Numele Riscului]\n- **Clauza originală:** [Textul din contract]\n- **Traducere pe înțelesul tuturor:** [Ce înseamnă de fapt în limbaj simplu]\n- **De ce este periculoasă:** [Riscul real pentru freelancer]\n- **Sugestie de renegociere:** [Cum să reformuleze sau ce contra-argument să folosească]"
     },
     "en": {
         "title": "📄 Freelancer Contract Assistant",
@@ -93,7 +93,11 @@ TEXTS = {
 # =====================================================================
 st.sidebar.markdown("<h2 style='text-align: center; color: #0284c7;'>🛡️ Asistent Scut</h2>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
-pagina_curenta = st.sidebar.radio("Navigare pagini:", ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"])
+
+# Definim clar opțiunile de pagini
+OPTIUNI_PAGINI = ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"]
+
+pagina_curenta = st.sidebar.radio("Navigare pagini:", OPTIUNI_PAGINI)
 st.sidebar.markdown("---")
 lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], format_func=lambda x: "🇷🇴 Română" if x == "ro" else "🇺🇸 English")
 t = TEXTS[lang]
@@ -133,7 +137,6 @@ if pagina_curenta == "Aplicație Analiză":
 
     contract_final_text = ""
     
-    # STRUCTURĂ ULTRA-SIMPLIFICATĂ FĂRĂ BLOCURI TRY-EXCEPT PROBLEMATICE
     if uploaded_file is not None:
         nume_fisier = uploaded_file.name.lower()
         if nume_fisier.endswith(".pdf"):
