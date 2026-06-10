@@ -14,7 +14,6 @@ def verifica_integritate_cod():
         cale_fisier = __file__
         with open(cale_fisier, "r", encoding="utf-8") as f:
             continut_cod = f.read()
-        
         if continut_cod.count(SEMNATURA_OBLIGATORIE) < 2:
             st.error("❌ EROARE CRITICĂ: Licență invalidă sau cod modificat neautorizat.")
             st.warning("Această aplicație aparține de drept lui IULIAN ICHIM-UNGUREANU (Pantick). Accesul este blocat.")
@@ -23,13 +22,9 @@ def verifica_integritate_cod():
         st.error("❌ Eroare de sistem la verificarea licenței de autor.")
         st.stop()
 
-# Declanșăm verificarea automată la fiecare rulare
 verifica_integritate_cod()
 # =====================================================================
 
-# =====================================================================
-# CONFIGURARE PAGINĂ ȘI DESIGN PREMIUM (Cromatica Slate & Blue)
-# =====================================================================
 st.set_page_config(
     page_title="Asistent Contracte Freelanceri", 
     page_icon="📄", 
@@ -37,12 +32,9 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Injectare CSS personalizat pentru aspect profesional și carduri responsive
 st.markdown("""
     <style>
-        html, body, [data-testid="stSidebarView"] {
-            font-family: 'Inter', sans-serif;
-        }
+        html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
         .feature-card {
             background-color: #f8fafc;
             padding: 20px;
@@ -51,32 +43,17 @@ st.markdown("""
             margin-bottom: 15px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .feature-title {
-            color: #0f172a;
-            font-weight: 600;
-            margin-bottom: 5px;
-            font-size: 16px;
-        }
-        .feature-desc {
-            color: #475569;
-            font-size: 14px;
-            line-height: 1.5;
-        }
+        .feature-title { color: #0f172a; font-weight: 600; margin-bottom: 5px; font-size: 16px; }
+        .feature-desc { color: #475569; font-size: 14px; line-height: 1.5; }
     </style>
 """, unsafe_allow_html=True)
 
-# =====================================================================
-# CONFIGURARE LOGICĂ DE MONETIZARE ȘI CONTORIZARE DEMO
-# =====================================================================
-CHEIE_API_DEMO = "gen-lang-client-0040445167" 
+CHEIE_API_DEMO = "AICI_PUI_CHEIA_TA_GEMINI" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
-# =====================================================================
-# DICȚIONARUL DE LIMBI (INTERFAȚĂ ȘI INSTRUCȚIUNI AI)
-# =====================================================================
 TEXTS = {
     "ro": {
         "title": "📄 Asistent de Negociere pentru Freelanceri",
@@ -162,3 +139,26 @@ TEXTS = {
             "### 🚩 [Risk Name]\n"
             "- **Original Clause:** [Text from the contract]\n"
             "- **Plain English Translation:** [What it actually means in simple terms]\n"
+            "- **Why it is dangerous:** [The real risk for the freelancer]\n"
+            "- **Negotiation Suggestion:** [How to rephrase it or what counter-argument to use]"
+        )
+    }
+}
+
+st.sidebar.markdown("<h2 style='text-align: center; color: #0284c7;'>🛡️ Asistent Scut</h2>", unsafe_allow_html=True)
+st.sidebar.markdown("---")
+
+pagina_curenta = st.sidebar.radio(
+    "Navigare pagini:",
+    ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"]
+)
+
+st.sidebar.markdown("---")
+lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], format_func=lambda x: "🇷🇴 Română" if x == "ro" else "🇺🇸 English")
+t = TEXTS[lang]
+
+if pagina_curenta == "Aplicație Analiză":
+    st.title(t["title"])
+    st.markdown(f"<p style='font-size:18px; color:#475569; margin-bottom:30px;'>{t['subtitle']}</p>", unsafe_allow_html=True)
+
+    if "rezultat_analiza" not in st.session_state:
