@@ -1,28 +1,51 @@
 import streamlit as st
 
-st.title("🔒 Politica de Confidențialitate (GDPR)")
-st.write("Ultima actualizare: Iunie 2026")
+if "limba" not in st.session_state:
+    st.session_state["limba"] = "RO"
 
-st.markdown("""
-### 1. ANGAJAMENTUL PRIVIND PROTECȚIA DATELOR
-Respectăm confidențialitatea și securitatea datelor cu caracter personal în conformitate cu Regulamentul (UE) 2016/679 (Regulamentul general privind protecția datelor - GDPR). Acest document explică în mod transparent modul în care datele transmise prin intermediul Platformei noastre sunt gestionate.
+col_st, col_dr = st.columns([8, 2])
+with col_dr:
+    st.link_button("☕ Buy me a coffee", "https://linktr.ee/safescanallergyscan")
 
-### 2. DATELE COLECTATE ȘI PROCESATE
-Aplicația noastră aplică o politică fundamentală de **ZERO STOCARE (No Data Retention)**:
-* **FĂRĂ COLECTARE DE IDENTITATE:** Platforma în varianta sa actuală nu colectează adrese de e-mail (cu excepția paginii de Feedback unde utilizatorul le introduce voluntar), nume, prenume, numere de telefon sau date bancare.
-* **CONȚINUTUL CONTRACTELOR:** Atunci când încărcați un fișier de tip PDF, Word (.docx) sau text, conținutul documentului este citit digital și trimis exclusiv pe o linie securizată către analiza AI. Acest text nu este copiat pe serverele noastre, nu este salvat în fișiere jurnal (logs) și nu este vizualizat de nicio persoană fizică.
+if st.session_state["limba"] == "RO":
+    st.title("🔒 Politica de Confidențialitate")
+    st.caption("Ultima actualizare: Iunie 2026 | Conformitate cu UK-GDPR")
+    st.markdown("""
+    ### 1. PRINCIPIUL DE BAZĂ: ZERO STOCARE DATE CONTRACTUALE
+    Prioritatea absolută a acestei Platforme este confidențialitatea totală. 
+    * **Fișiere și texte:** Nu deținem baze de date pentru stocarea documentelor comerciale sau a textelor analizate.
+    * **Chei API:** Cheia Gemini API introdusă personal de utilizator rulează exclusiv în memoria volatilă a sesiunii și dispare irevocabil la închiderea ferestrei.
 
-### 3. TRANSMITEREA DATELOR CĂTRE TERȚE PĂRȚI (GOOGLE GEMINI API)
-Pentru a vă pune la dispoziție funcția de analiză automată, textul extras din contract este transmis prin intermediul unei conexiuni securizate criptate (HTTPS) către serverele Google Gemini API.
-* **POLITICA GOOGLE PRIVIND DATELE:** Conform termenilor oficiali de utilizare ai Google pentru API-urile dedicate dezvoltatorilor (Google AI Studio Enterprise/Developer Terms), datele transmise prin apeluri API **NU sunt utilizate de Google pentru a antrena sau îmbunătăți modelele lor de inteligență artificială publice**. Datele dumneavoastră rămân izolate în acea sesiune de procesare.
+    ### 2. DATE COLECTATE DE PĂRȚI TERȚE (GOOGLE ADMOB)
+    Deoarece Platforma afișează reclame pentru auto-susținere, servicii terțe (Google AdMob) pot colecta date tehnice:
+    * **Cookie-uri și Identificatori:** Google poate utiliza module cookie sau identificatori publicitari pentru a afișa reclame relevante.
+    * **Controlul utilizatorului:** Puteți reseta sau bloca acești identificatori din setările browserului dumneavoastră.
 
-### 4. DREPTURILE DUMNEAVOASTRĂ CONFORM GDPR
-Regulamentul GDPR oferă persoanelor vizate o serie de drepturi, printre care: dreptul de acces la date, dreptul de rectificare, dreptul la ștergerea datelor („dreptul de a fi uitat”) și dreptul de restricționare.
-* **CUM SE APLICĂ AICI:** Deoarece aplicația noastră nu stochează absolut nicio dată personală și nu deține o bază de date, **nu colectăm informații pe care să le putem extrage, modifica sau șterge la cerere**. Datele dumneavoastră se șterg singure în momentul în care părăsiți website-ul sau închideți browserul.
+    ### 3. DONAȚII ȘI REȚELE EXTERNE (LINKTREE)
+    Platforma folosește servicii externe precum Linktree pentru donații voluntare. Interacțiunea cu aceste link-uri se supune politicilor de confidențialitate ale platformelor respective (Linktree, PayPal etc.).
 
-### 5. SECURITATEA DATELOR
-Deși datele sunt volatile și nu sunt păstrate pe server, transmisiunea dintre dispozitivul dumneavoastră (telefon sau calculator) și cloud este securizată prin protocoale de criptare SSL/TLS de ultimă generație furnizate automat prin infrastructura securizată a serverelor Streamlit Cloud.
+    ### 4. JURISDICȚIE
+    Orice solicitare legată de datele tehnice procesate va fi guvernată de legea din Anglia și Țara Galilor, sub autoritatea exclusivă a instanțelor din **Milton Keynes, Regatul Unit**.
+    """)
+else:
+    st.title("🔒 Privacy Policy")
+    st.caption("Last Updated: June 2026 | UK-GDPR Compliance")
+    st.markdown("""
+    ### 1. CORE PRINCIPLE: ZERO CONTRACTUAL DATA STORAGE
+    The absolute priority of this Platform is total confidentiality.
+    * **Files and Texts:** We do not own or maintain databases to store uploaded commercial documents or analyzed texts.
+    * **API Keys:** The Gemini API key entered by the user runs exclusively within volatile session memory and is irrevocably destroyed upon closing the browser tab.
 
-### 6. FORMULARUL DE FEEDBACK ȘI CONTACT
-Dacă decideți să folosiți pagina „Feedback & Contact”, datele introduse (Nume, Email, Mesaj) sunt transmise securizat prin intermediul serviciului terț FormSubmit direct către adresa de e-mail a administratorului (`leaiichim@gmail.com`). Aceste date sunt folosite exclusiv pentru a vă răspunde la solicitări și nu vor fi vândute, închiriate sau distribuite către nicio altă companie de marketing.
-""")
+    ### 2. DATA COLLECTED BY THIRD PARTIES (GOOGLE ADMOB)
+    As the Platform displays advertisements for technical self-sustainment, third-party services (Google AdMob) may collect technical data:
+    * **Cookies and Identifiers:** Google may use cookies or advertising identifiers to serve relevant ads based on user visits.
+    * **User Control:** You can reset or disable these identifiers directly via your browser settings.
+
+    ### 3. DONATIONS AND EXTERNAL NETWORKS (LINKTREE)
+    The Platform uses external services like Linktree to redirect users to voluntary donation options. Interactions with these links are subject to the privacy policies of the respective platforms (Linktree, PayPal, etc.).
+
+    ### 4. JURISDICTION
+    Any request or dispute regarding the technical session data processed on this site shall be governed by the laws of England and Wales, under the exclusive authority of the courts in **Milton Keynes, United Kingdom**.
+    """)
+
+st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
