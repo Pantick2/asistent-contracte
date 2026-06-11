@@ -1,7 +1,20 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-# Configurare aplicație (Trebuie să fie prima linie absolută)
+# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
+
+# =====================================================================
+# 🍪 INJECTARE POPUP CONSIMȚĂMÂNT COOKIE-URI (OBLIGATORIU ADMOB / UK-GDPR)
+# =====================================================================
+# ⚠️ ÎNLOCUIEȘTE LINK-UL DE MAI JOS CU SCRIPTUL TĂU REAL GENERAT DE COOKIE-SCRIPT SAU COOKIEBOT:
+LINK_SCRIPT_COOKIE = "https://cookie-script.com"
+
+html_cookie_banner = f"""
+<script type="text/javascript" src="{LINK_SCRIPT_COOKIE}"></script>
+"""
+# Executăm injectarea scriptului în fundalul invizibil al paginii
+components.html(html_cookie_banner, height=0)
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
@@ -31,16 +44,15 @@ optiune_limba = st.sidebar.selectbox(
 st.session_state["limba"] = "RO" if "Română" in optiune_limba else "EN"
 
 # =====================================================================
-# ☕ BUTONUL DEFINITIV ȘI PERMANENT DE DONAȚII (ÎN SIDEBAR, SUB MENIU)
+# ☕ BUTONUL PERMANENT DE DONAȚII (ÎN SIDEBAR)
 # =====================================================================
 st.sidebar.markdown("---")
-# Textul butonului se schimbă automat în funcție de limba selectată mai sus
 text_buton_donatie = "☕ Donate" if st.session_state["limba"] == "EN" else "☕ Donatie"
-st.sidebar.link_button(text_buton_donatie, "https://linktr.ee/safescanallergyscan", type="primary")
+st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
 st.sidebar.markdown("---")
 
 # =====================================================================
-# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (MAPPED DIRECT PE FIȘIERE)
+# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE
 # =====================================================================
 pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Aplicație Analiză", default=True)
 pagina_contact = st.Page("pagini/contact.py", title="💬 Feedback & Contact")
