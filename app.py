@@ -3,6 +3,7 @@ from google import genai
 from google.genai import types
 import docx
 import pypdf
+import texte_legale  # Importăm noul tău fișier cu texte legale
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
@@ -28,6 +29,7 @@ st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄"
 st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
+# ⚠️ PUNE CHEIA TA REALĂ ÎNTRE GHILIMELELE DE MAI JOS:
 CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
@@ -93,7 +95,6 @@ TEXTS = {
 st.sidebar.markdown("<h2 style='text-align: center; color: #0284c7;'>🛡️ Asistent Scut</h2>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
-# Meniu de navigare cu denumiri fixe
 pagina_curenta = st.sidebar.radio("Navigare pagini:", ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"])
 
 st.sidebar.markdown("---")
@@ -122,7 +123,7 @@ def citeste_contract_docx(file_obj):
     return txt_acumulat
 
 # =====================================================================
-# BLOC LOGIC DE RULARE STRUCTURAT (IF - ELIF - ELSE LEGATE STRÂNS)
+# LOGICĂ DE RULARE CU IMPORT EXTERN DIRECT
 # =====================================================================
 if pagina_curenta == "Aplicație Analiză":
     st.title(t["title"])
@@ -149,5 +150,3 @@ if pagina_curenta == "Aplicație Analiză":
 
     client = None
     if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
-        client = genai.Client(api_key=cheie_finala)
-
