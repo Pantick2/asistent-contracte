@@ -36,7 +36,7 @@ st.session_state["limba"] = "RO" if "Română" in optiune_limba else "EN"
 st.sidebar.markdown("---")
 # Textul butonului se schimbă automat în funcție de limba selectată mai sus
 text_buton_donatie = "☕ Donate" if st.session_state["limba"] == "EN" else "☕ Donatie"
-st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
+st.sidebar.link_button(text_buton_donatie, "https://linktr.ee/safescanallergyscan", type="primary")
 st.sidebar.markdown("---")
 
 # =====================================================================
