@@ -1,3 +1,4 @@
+
 ```python
 import streamlit as st
 
@@ -83,3 +84,5 @@ else:
     ### 8. GOVERNING LAW AND EXCLUSIVE JURISDICTION
     These Terms are governed by and construed in accordance with the **laws of England and Wales (English Law)**. Any dispute shall be submitted to the **exclusive jurisdiction of the courts in Milton Keynes, United Kingdom**.
     """)
+
+st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
