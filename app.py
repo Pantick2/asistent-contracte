@@ -3,10 +3,10 @@ from google import genai
 from google.genai import types
 import docx
 import pypdf
-import texte_legale  # Importăm noul tău fișier cu texte legale
+import texte_legale
 
 # =====================================================================
-# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIV EXCLUSIVĂ)
 # =====================================================================
 SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
 
@@ -29,7 +29,6 @@ st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄"
 st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
-# ⚠️ PUNE CHEIA TA REALĂ ÎNTRE GHILIMELELE DE MAI JOS:
 CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
@@ -108,8 +107,7 @@ def citeste_contract_pdf(file_obj):
     txt_acumulat = ""
     try:
         pdf_rd = pypdf.PdfReader(file_obj)
-        for p in pdf_rd.pages:
-            txt_acumulat += p.extract_text() or ""
+        for p in pdf_rd.pages: txt_acumulat += p.extract_text() or ""
     except Exception: pass
     return txt_acumulat
 
@@ -117,13 +115,12 @@ def citeste_contract_docx(file_obj):
     txt_acumulat = ""
     try:
         doc_rd = docx.Document(file_obj)
-        for pr in doc_rd.paragraphs:
-            txt_acumulat += pr.text + "\n"
+        for pr in doc_rd.paragraphs: txt_acumulat += pr.text + "\n"
     except Exception: pass
     return txt_acumulat
 
 # =====================================================================
-# LOGICĂ DE RULARE CU IMPORT EXTERN DIRECT
+# BLOC LOGIC DE RULARE DIRECTĂ (IF - ELIF - ELSE)
 # =====================================================================
 if pagina_curenta == "Aplicație Analiză":
     st.title(t["title"])
@@ -141,12 +138,11 @@ if pagina_curenta == "Aplicație Analiză":
     cheie_finala = None
 
     if api_cheie_utilizator.strip():
-        cheie_finala = api_cheie_utilizator
-        foloseste_mod_demo = False
-        st.sidebar.success("Cheie personală activă.")
+        cheie_finala = api_cheie_utilizator; foloseste_mod_demo = False; st.sidebar.success("Cheie personală activă.")
     else:
-        cheie_finala = CHEIE_API_DEMO
-        st.sidebar.info(f"{t['api_info']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE})")
+        cheie_finala = CHEIE_API_DEMO; st.sidebar.info(f"{t['api_info']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE})")
 
     client = None
-    if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
+    if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI": client = genai.Client(api_key=cheie_finala)
+
+    uploaded_file = st.file_uploader(t["file_label"], type=["pdf", "docx", "txt"])
