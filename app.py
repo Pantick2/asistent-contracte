@@ -5,7 +5,7 @@ st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄"
 
 # Injectare Meta Tag direct în aplicație pentru validarea AdSense
 st.markdown(
-    '<meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">', 
+    '<meta name="google-adsense-account" content="ca-pub-3528838516008000">', 
     unsafe_allow_html=True
 )
 import streamlit as st
