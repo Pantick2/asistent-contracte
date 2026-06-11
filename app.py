@@ -1,146 +1,43 @@
 import streamlit as st
-from google import genai
-from google.genai import types
-import docx
-import pypdf
 
+# Configurare aplicație (Trebuie să fie prima linie)
+st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
+
+# =====================================================================
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
+# =====================================================================
+SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
+
+try:
+    with open(__file__, "r", encoding="utf-8") as f:
+        if "IULIAN_ICHIM_UNGUREANU" not in f.read():
+            st.error("❌ EROARE: Licență invalidă sau cod modificat.")
+            st.stop()
+except Exception:
+    pass
+
+# =====================================================================
+# 🌐 COMUTATORUL GLOBAL DE LIMBĂ (ÎN SIDEBAR)
+# =====================================================================
 if "limba" not in st.session_state:
     st.session_state["limba"] = "RO"
 
-# Dicționar de traduceri pentru interfața de analiză
-t = {
-    "RO": {
-        "titlu": "📄 Asistent de Negociere pentru Freelanceri",
-        "subtitlu": "Protejează-ți business-ul. Identifică clauzele abuzive ascunse și renegociază de la egal la egal.",
-        "ghid": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un **copilot de negociere**. Informațiile generate sunt **strict orientative**. Acest instrument NU oferă asistență juridică sau consultanță de avocat. Aplicația aplică o politică de **zero stocare**.",
-        "c1": "<b>💡 Ghid de Îndrumare</b><br>Traduce clauzele contractuale încâlcite în idei simple.",
-        "c2": "<b>🚩 Alertă Clauze Ascunse</b><br>Semnalează penalitățile disproporționate sau termenele de plată.",
-        "c3": "<b>🗣️ Idei de Renegociere</b><br>Îți oferă argumente și formulări politicoase.",
-        "side_s": "Cheie personală activă.",
-        "side_d": "Modul DEMO activ",
-        "up_t": "Trage sau încarcă contractul (PDF, DOCX, TXT):",
-        "tx_t": "Sau introdu textul clauzelor suspecte manual:",
-        "disc": "🔒 **Securitate & Disclaimer:** Conținutul documentelor nu este stocat sau folosit pentru antrenarea modelelor publice. Această analiză automată are rol informativ și nu înlocuiește sfatul unui avocat.",
-        "bifa": "Am citit, înțeleg și sunt de acord cu Termenii, Condițiile și procesarea datelor în conformitate cu GDPR.",
-        "b_start": "Pornește Analiza Inteligentă",
-        "e_limita": "⚠️ Limita demo a fost atinsă!",
-        "e_text": "Te rugăm să introduci text sau să încarci un document.",
-        "e_config": "Sistemul Demo nu este configurat!",
-        "spinner": "AI-ul scanează textul pentru riscuri legale...",
-        "succes": "Analiză finalizată cu succes!",
-        "rap_t": "## 🔍 Raport de Audit Contractual",
-        "b_down": "Descarcă Raportul (.txt)",
-        "prompt": "Ești un expert juridic specializat în protecția freelancerilor. Analizează textul contractului oferit și identifică riscurile majore. Răspunde STRICT în limba ROMÂNĂ. Returnează rezultatul în format Markdown, cu structura: ### 🚩 [Nume Risc], Clauză originală, Traducere, De ce e periculoasă, Sugestie renegociere.",
-        "subsol": "🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)"
-    },
-    "EN": {
-        "titlu": "📄 Negotiation Assistant for Freelancers",
-        "subtitlu": "Protect your business. Identify hidden unfair clauses and renegotiate on equal terms.",
-        "ghid": "💡 **How to use this tool:** This site acts as a **negotiation copilot**. Generated information is **strictly indicative**. This tool DOES NOT provide legal advice or solicitor assistance. The app enforces a **zero data storage** policy.",
-        "c1": "<b>💡 Guidance Guide</b><br>Translates tangled contract clauses into simple ideas.",
-        "c2": "<b>🚩 Hidden Clauses Alert</b><br>Flags disproportionate penalties or payment terms.",
-        "c3": "<b>🗣️ Renegotiation Ideas</b><br>Provides you with polite arguments and wordings.",
-        "side_s": "Personal key active.",
-        "side_d": "DEMO mode active",
-        "up_t": "Drag or upload contract (PDF, DOCX, TXT):",
-        "tx_t": "Or enter the text of suspicious clauses manually:",
-        "disc": "🔒 **Security & Disclaimer:** Document content is not stored or used to train public models. This automated analysis is for informational purposes and does not replace the advice of a lawyer.",
-        "bifa": "I have read, understand and agree to the Terms, Conditions and data processing in accordance with GDPR.",
-        "b_start": "Start Intelligent Analysis",
-        "e_limita": "⚠️ Demo limit reached!",
-        "e_text": "Please enter text or upload a document.",
-        "e_config": "Demo System is not configured!",
-        "spinner": "AI is scanning text for legal risks...",
-        "succes": "Analysis completed successfully!",
-        "rap_t": "## 🔍 Contractual Audit Report",
-        "b_down": "Download Report (.txt)",
-        "prompt": "You are a legal expert specializing in freelancer protection. Analyze the provided contract text and identify major risks. Respond STRICTLY in ENGLISH. Return the result in Markdown format with the structure: ### 🚩 [Risk Name], Original Clause, Translation, Why it is dangerous, Renegotiation suggestion.",
-        "subsol": "🛡️ Freelancer Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Pantick)"
-    }
-}
+optiune_limba = st.sidebar.selectbox(
+    "🌐 Schimbă Limba / Language:",
+    ["Română (RO)", "English (EN)"],
+    index=0 if st.session_state["limba"] == "RO" else 1
+)
 
-L = t[st.session_state["limba"]]
+st.session_state["limba"] = "RO" if "Română" in optiune_limba else "EN"
 
-st.markdown("""<style>
-.feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }
-</style>""", unsafe_allow_html=True)
+# =====================================================================
+# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (MAPPED DIRECT PE FIȘIERE)
+# =====================================================================
+pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Aplicație Analiză", default=True)
+pagina_contact = st.Page("pagini/contact.py", title="💬 Feedback & Contact")
+pagina_termeni = st.Page("pagini/termeni.py", title="⚖️ Termeni și Condiții")
+pagina_gdpr = st.Page("pagini/politica.py", title="🔒 Politica de Confidențialitate")
 
-CHEIE_API_DEMO = "gen-lang-client-0040445167" 
-LIMITA_UTILIZARI_GRATUITE = 2
-
-if "numar_utilizari" not in st.session_state:
-    st.session_state["numar_utilizari"] = 0
-
-st.title(L["titlu"])
-st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
-
-if "rezultat_analiza" not in st.session_state:
-    st.info(L["ghid"])
-    col1, col2, col3 = st.columns(3)
-    with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
-    with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
-    with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
-
-api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password")
-foloseste_mod_demo = True
-cheie_finala = None
-
-if api_cheie_utilizator.strip():
-    cheie_finala = api_cheie_utilizator
-    foloseste_mod_demo = False
-    st.sidebar.success(L["side_s"])
-else:
-    cheie_finala = CHEIE_API_DEMO
-    st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE} analize).")
-
-client = None
-if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
-    client = genai.Client(api_key=cheie_finala)
-
-uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
-text_manual = st.text_area(L["tx_t"], height=150)
-
-contract_final_text = ""
-if uploaded_file is not None:
-    nm_f = uploaded_file.name.lower()
-    if ".pdf" in nm_f:
-        try: contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
-        except Exception: pass
-    if ".docx" in nm_f:
-        try: contract_final_text = "\n".join([pr.text for pr in docx.Document(uploaded_file).paragraphs])
-        except Exception: pass
-    if ".txt" in nm_f:
-        try: contract_final_text = uploaded_file.read().decode("utf-8")
-        except Exception: pass
-
-if text_manual.strip():
-    contract_final_text = text_manual
-
-st.markdown("---")
-st.caption(L["disc"])
-accepta_gdpr = st.checkbox(L["bifa"])
-st.markdown("---")
-
-if st.button(L["b_start"], type="primary", disabled=not accepta_gdpr):
-    if foloseste_mod_demo and st.session_state["numar_utilizari"] >= LIMITA_UTILIZARI_GRATUITE:
-        st.error(L["e_limita"])
-    elif not contract_final_text.strip():
-        st.error(L["e_text"])
-    elif client is None:
-        st.error(L["e_config"])
-    else:
-        with st.spinner(L["spinner"]):
-            try:
-                response = client.models.generate_content(model='gemini-2.5-flash', contents=f"Contract:\n\n{contract_final_text}", config=types.GenerateContentConfig(system_instruction=L["prompt"], temperature=0.2))
-                if foloseste_mod_demo: st.session_state["numar_utilizari"] += 1
-                st.session_state["rezultat_analiza"] = response.text
-                st.success(L["succes"])
-                st.rerun()
-            except Exception as e: st.error(f"Eroare: {str(e)}")
-
-if "rezultat_analiza" in st.session_state:
-    st.markdown(L["rap_t"])
-    st.markdown(st.session_state["rezultat_analiza"])
-    st.download_button(label=L["b_down"], data=st.session_state["rezultat_analiza"], file_name="analiza.txt", mime="text/plain")
-    
-st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
+# Generăm automat meniul din stânga securizat
+pg = st.navigation([pagina_analiza, pagina_contact, pagina_termeni, pagina_gdpr])
+pg.run()
