@@ -1,6 +1,6 @@
 import streamlit as st
 
-# Configurare aplicație (Trebuie să fie prima linie)
+# Configurare aplicație (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
 # =====================================================================
@@ -17,7 +17,7 @@ except Exception:
     pass
 
 # =====================================================================
-# 🌐 COMUTATORUL GLOBAL DE LIMBĂ (ÎN SIDEBAR)
+# 🌐 COMUTATOR GLOBAL DE LIMBĂ (ÎN SIDEBAR)
 # =====================================================================
 if "limba" not in st.session_state:
     st.session_state["limba"] = "RO"
@@ -29,6 +29,15 @@ optiune_limba = st.sidebar.selectbox(
 )
 
 st.session_state["limba"] = "RO" if "Română" in optiune_limba else "EN"
+
+# =====================================================================
+# ☕ BUTONUL DEFINITIV ȘI PERMANENT DE DONAȚII (ÎN SIDEBAR, SUB MENIU)
+# =====================================================================
+st.sidebar.markdown("---")
+# Textul butonului se schimbă automat în funcție de limba selectată mai sus
+text_buton_donatie = "☕ Donate" if st.session_state["limba"] == "EN" else "☕ Donatie"
+st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
+st.sidebar.markdown("---")
 
 # =====================================================================
 # STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (MAPPED DIRECT PE FIȘIERE)
