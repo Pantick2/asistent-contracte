@@ -7,11 +7,18 @@ import pypdf
 if "limba" not in st.session_state:
     st.session_state["limba"] = "RO"
 
-# Dicționar de traduceri pentru interfața de analiză
+# Initializam starea acceptului in sesiune
+if "termeni_acceptati" not in st.session_state:
+    st.session_state.termeni_acceptati = False
+
+# Dicționar de traduceri pentru interfața de analiză și sistemul de bifare
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere pentru Freelanceri",
         "subtitlu": "Protejează-ți business-ul. Identifică clauzele abuzive ascunse și renegociază de la egal la egal.",
+        "avertisment_b2b": "⚠️ **Utilizare B2B Exclusivă:** Această platformă este un instrument experimental destinat exclusiv profesioniștilor (freelanceri/firme).",
+        "bifa_text": "Am citit, înțeleg și sunt de acord în mod expres cu Termenii, Condițiile de Utilizare și Politica de Confidențialitate (GDPR).",
+        "blocat_text": "🔒 Pentru a accesa funcțiile de upload și analiza AI, trebuie mai întâi să bifați căsuța de acceptare a Termenilor de mai sus.",
         "ghid": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un **copilot de negociere**. Informațiile generate sunt **strict orientative**. Acest instrument NU oferă asistență juridică sau consultanță de avocat. Aplicația aplică o politică de **zero stocare**.",
         "c1": "<b>💡 Ghid de Îndrumare</b><br>Traduce clauzele contractuale încâlcite în idei simple.",
         "c2": "<b>🚩 Alertă Clauze Ascunse</b><br>Semnalează penalitățile disproporționate sau termenele de plată.",
@@ -21,7 +28,6 @@ t = {
         "up_t": "Trage sau încarcă contractul (PDF, DOCX, TXT):",
         "tx_t": "Sau introdu textul clauzelor suspecte manual:",
         "disc": "🔒 **Securitate & Disclaimer:** Conținutul documentelor nu este stocat sau folosit pentru antrenarea modelelor publice. Această analiză automată are rol informativ și nu înlocuiește sfatul unui avocat.",
-        "bifa": "Am citit, înțeleg și sunt de acord cu Termenii, Condițiile și procesarea datelor în conformitate cu GDPR.",
         "b_start": "Pornește Analiza Inteligentă",
         "e_limita": "⚠️ Limita demo a fost atinsă!",
         "e_text": "Te rugăm să introduci text sau să încarci un document.",
@@ -36,6 +42,9 @@ t = {
     "EN": {
         "titlu": "📄 Negotiation Assistant for Freelancers",
         "subtitlu": "Protect your business. Identify hidden unfair clauses and renegotiate on equal terms.",
+        "avertisment_b2b": "⚠️ **B2B Exclusive Use:** This platform is an experimental tool intended exclusively for professionals (freelancers/businesses).",
+        "bifa_text": "I have read, understand and expressly agree to the Terms, Conditions of Use and the Privacy Policy (GDPR).",
+        "blocat_text": "🔒 To access upload functions and AI analysis, you must first check the box to accept the Terms above.",
         "ghid": "💡 **How to use this tool:** This site acts as a **negotiation copilot**. Generated information is **strictly indicative**. This tool DOES NOT provide legal advice or solicitor assistance. The app enforces a **zero data storage** policy.",
         "c1": "<b>💡 Guidance Guide</b><br>Translates tangled contract clauses into simple ideas.",
         "c2": "<b>🚩 Hidden Clauses Alert</b><br>Flags disproportionate penalties or payment terms.",
@@ -45,7 +54,6 @@ t = {
         "up_t": "Drag or upload contract (PDF, DOCX, TXT):",
         "tx_t": "Or enter the text of suspicious clauses manually:",
         "disc": "🔒 **Security & Disclaimer:** Document content is not stored or used to train public models. This automated analysis is for informational purposes and does not replace the advice of a lawyer.",
-        "bifa": "I have read, understand and agree to the Terms, Conditions and data processing in accordance with GDPR.",
         "b_start": "Start Intelligent Analysis",
         "e_limita": "⚠️ Demo limit reached!",
         "e_text": "Please enter text or upload a document.",
@@ -71,9 +79,28 @@ LIMITA_UTILIZARI_GRATUITE = 2
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
+# Titlul și subtitlul sunt vizibile mereu pentru design profesional
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
+# =====================================================================
+# 🔒 ZIDUL JURIDIC DE BLOCARE (CHECKBOX OBLIGATORIU)
+# =====================================================================
+st.info(L["avertisment_b2b"])
+
+# Forțăm bifa direct în calea utilizatorului
+accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
+st.session_state.termeni_acceptati = accepta_termeni
+
+# Dacă utilizatorul NU a bifat căsuța, oprim execuția fișierului AICI
+if not st.session_state.termeni_acceptati:
+    st.warning(L["blocat_text"])
+    st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
+    st.stop()
+
+# =====================================================================
+# INTERFAȚA DE UPLOAD ȘI ANALIZĂ (RULEAZĂ DOAR DUPĂ CE SE BIFAZĂ)
+# =====================================================================
 if "rezultat_analiza" not in st.session_state:
     st.info(L["ghid"])
     col1, col2, col3 = st.columns(3)
@@ -94,7 +121,7 @@ else:
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE} analize).")
 
 client = None
-if cheie_finala and cheie_finala != "gen-lang-client-0040445167":
+if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
     client = genai.Client(api_key=cheie_finala)
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
@@ -118,10 +145,9 @@ if text_manual.strip():
 
 st.markdown("---")
 st.caption(L["disc"])
-accepta_gdpr = st.checkbox(L["bifa"])
 st.markdown("---")
 
-if st.button(L["b_start"], type="primary", disabled=not accepta_gdpr):
+if st.button(L["b_start"], type="primary"):
     if foloseste_mod_demo and st.session_state["numar_utilizari"] >= LIMITA_UTILIZARI_GRATUITE:
         st.error(L["e_limita"])
     elif not contract_final_text.strip():
@@ -143,4 +169,4 @@ if "rezultat_analiza" in st.session_state:
     st.markdown(st.session_state["rezultat_analiza"])
     st.download_button(label=L["b_down"], data=st.session_state["rezultat_analiza"], file_name="analiza.txt", mime="text/plain")
     
-st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
+st.markdown(f"{L['subsol']}", unsafe_allow_html=True)
