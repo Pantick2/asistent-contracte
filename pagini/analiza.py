@@ -4,11 +4,31 @@ from google.genai import types
 import docx
 import pypdf
 
+# =====================================================================
+# 🔒 ZIDUL LEGAL OBLIGATORIU DE BIFARE (SISTEM DE BLOCARE ANTI-PROCES)
+# =====================================================================
+if "termeni_acceptati" not in st.session_state:
+    st.session_state.termeni_acceptati = False
+
+st.info("⚠️ **Utilizare B2B Exclusivă:** Această platformă este un instrument experimental destinat exclusiv profesioniștilor (freelanceri/firme).")
+
+# Caseta de validare obligatorie
+accepta_gdpr = st.checkbox("Am citit, înțeleg și sunt de acord în mod expres cu Termenii, Condițiile și Politica de Confidențialitate (GDPR).")
+st.session_state.termeni_acceptati = accepta_gdpr
+
+# Dacă nu este bifat, oprim execuția scriptului AICI
+if not st.session_state.termeni_acceptati:
+    st.warning("🔒 Pentru a folosi AI-ul și a încărca documente, trebuie să bifați căsuța de acceptare a termenilor de mai sus.")
+    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
+    st.stop()
+
+# =====================================================================
+# CODUL TĂU ORIGINAL DE ANALIZĂ PORNEȘTE AICI (RULAT DOAR DACĂ BIFEAZĂ)
+# =====================================================================
 st.markdown("""<style>
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }
 </style>""", unsafe_allow_html=True)
 
-# ⚠️ PUNE CHEIA TA REALĂ ÎNTRE GHILIMELELE DE MAI JOS:
 CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
@@ -62,10 +82,9 @@ if text_manual.strip():
 
 st.markdown("---")
 st.caption("🔒 **Securitate & Disclaimer:** Conținutul documentelor nu este stocat sau folosit pentru antrenarea modelelor publice. Această analiză automată are rol informativ și nu înlocuiește sfatul unui avocat.")
-accepta_gdpr = st.checkbox("Am citit, înțeleg și sunt de acord cu Termenii, Condițiile și procesarea datelor în conformitate cu GDPR.")
 st.markdown("---")
 
-if st.button("Pornește Analiza Inteligentă", type="primary", disabled=not accepta_gdpr):
+if st.button("Pornește Analiza Inteligentă", type="primary"):
     if foloseste_mod_demo and st.session_state["numar_utilizari"] >= LIMITA_UTILIZARI_GRATUITE:
         st.error("⚠️ Limita demo a fost atinsă!")
         st.link_button("🚀 Obține cheia ta gratuită", "https://google.com")
