@@ -3,11 +3,11 @@
 # =====================================================================
 
 # Codul tău de client Google Publisher (Schimbă-l când primești codul real)
-COD_CLIENT_ADSENSE = "ca-pub-XXXXXXXXXXXXXXXX"
+COD_CLIENT_ADSENSE = "cca-pub-3528838516008000"
 
 # ID-urile unice pentru fiecare spațiu publicitar de pe site
-ID_BANNER_SIDEBAR = "XXXXXXXXXX"  # Bannerul din meniul din stânga
-ID_BANNER_FINAL = "YYYYYYYYYY"    # Bannerul de jos, de sub raport
+ID_BANNER_SIDEBAR = "9294641909"  # Bannerul din meniul din stânga
+ID_BANNER_FINAL = "2371850766"    # Bannerul de jos, de sub raport
 
 # Funcție care generează automat codul securizat cerut de Google
 def genereaza_html_banner(slot_id, latime="auto", inaltime="auto"):
