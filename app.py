@@ -12,7 +12,6 @@ SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
 def verifica_integritate_cod():
     try:
         with open(__file__, "r", encoding="utf-8") as f:
-            # Verificare simplificată și permisivă pentru editările pe telefon
             if f.read().count("IULIAN_ICHIM_UNGUREANU") < 1:
                 st.error("❌ EROARE: Licență invalidă sau cod modificat.")
                 st.stop()
@@ -106,7 +105,7 @@ lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], f
 t = TEXTS[lang]
 
 # =====================================================================
-# FUNCȚII EXTRAGERE TEXT
+# FUNCȚII EXTRAGERE TEXT LINIARĂ
 # =====================================================================
 def citeste_contract_pdf(file_obj):
     txt_acumulat = ""
@@ -114,8 +113,7 @@ def citeste_contract_pdf(file_obj):
         pdf_rd = pypdf.PdfReader(file_obj)
         for p in pdf_rd.pages:
             txt_acumulat += p.extract_text() or ""
-    except Exception:
-        pass
+    except Exception: pass
     return txt_acumulat
 
 def citeste_contract_docx(file_obj):
@@ -124,28 +122,32 @@ def citeste_contract_docx(file_obj):
         doc_rd = docx.Document(file_obj)
         for pr in doc_rd.paragraphs:
             txt_acumulat += pr.text + "\n"
-    except Exception:
-        pass
+    except Exception: pass
     return txt_acumulat
 
 # =====================================================================
-# FUNCȚII PAGINI IZOLATE
+# BLOC DIRECT DE EXECUȚIE PAGINI (FĂRĂ FUNCȚII INTERMEDIARE)
 # =====================================================================
-def randeaza_pagina_analiza():
+if pagina_curenta == PAGINA_ANALIZA:
     st.title(t["title"])
     st.markdown(f"<p style='font-size:18px; color:#475569;'>{t['subtitle']}</p>", unsafe_allow_html=True)
+    
     if "rezultat_analiza" not in st.session_state:
         st.info(t["welcome_disclaimer"])
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='feature-card'><b>{t['card1_title']}</b><br>{t['card1_desc']}</div>", unsafe_allow_html=True)
         with col2: st.markdown(f"<div class='feature-card'><b>{t['card2_title']}</b><br>{t['card2_desc']}</div>", unsafe_allow_html=True)
         with col3: st.markdown(f"<div class='feature-card'><b>{t['card3_title']}</b><br>{t['card3_desc']}</div>", unsafe_allow_html=True)
+
     api_cheie_utilizator = st.sidebar.text_input(t["sidebar_api"], type="password")
     foloseste_mod_demo = True
     cheie_finala = None
+
     if api_cheie_utilizator.strip():
         cheie_finala = api_cheie_utilizator
         foloseste_mod_demo = False
         st.sidebar.success("Cheie personală activă.")
     else:
         cheie_finala = CHEIE_API_DEMO
+        st.sidebar.info(f"{t['api_info']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE})")
+
