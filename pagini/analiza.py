@@ -4,7 +4,7 @@ from google.genai import types
 import docx
 import pypdf
 
-# 1. GESTIONARE LIMBĂ (Implicit Română)
+# 1. Gestionare Limbă (Implicit Română)
 if "limba" not in st.session_state:
     st.session_state["limba"] = "RO"
 
@@ -14,18 +14,23 @@ if "termeni_acceptati" not in st.session_state:
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
-# 2. SCHIMBARE LIMBĂ DIRECTĂ
-if st.button("🌐 Schimbă Limba / Switch Language"):
-    if st.session_state["limba"] == "RO":
-        st.session_state["limba"] = "EN"
-    else:
-        st.session_state["limba"] = "RO"
-    st.rerun()
+# 2. Antet pe două coloane: Titlu/Limbă (Stânga) și Butonul de Donație (Dreapta)
+col_stanga, col_dreapta = st.columns([4, 1])
 
-# 3. BUTON DONAȚIE SPRE LINKTREE
-st.link_button("☕ Buy me a coffee / Donează", "https://linktr.ee", type="secondary")
+with col_stanga:
+    if st.button("🌐 Schimbă Limba / Switch Language"):
+        if st.session_state["limba"] == "RO":
+            st.session_state["limba"] = "EN"
+        else:
+            st.session_state["limba"] = "RO"
+        st.rerun()
 
-# 4. TRADUCERI INTERFAȚĂ
+with col_dreapta:
+    # Text dinamic în funcție de limba selectată
+    text_donatie = "Donate" if st.session_state["limba"] == "EN" else "Donatie"
+    st.link_button(text_donatie, "https://linktr.ee", type="primary")
+
+# 3. Dicționar de Traduceri pentru interfață
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere pentru Freelanceri",
@@ -93,7 +98,7 @@ LIMITA_UTILIZARI_GRATUITE = 2
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
-# 5. ZIDUL JURIDIC OBLIGATORIU
+# 4. Zidul de securitate obligatoriu
 st.info(L["avertisment_b2b"])
 
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati)
@@ -104,15 +109,18 @@ if not st.session_state.termeni_acceptati:
     st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
     st.stop()
 
-# 6. FUNCTII DE CARDURI IN-LINE
+# 5. Afișare ghid și carduri informative
 if "rezultat_analiza" not in st.session_state:
     st.info(L["ghid"])
     col1, col2, col3 = st.columns(3)
-    with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
-    with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
-    with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
+    with col1:
+        st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
+    with col2:
+        st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
+    with col3:
+        st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
 
-# 7. SIDEBAR SI VALIDARI CHEI
+# 6. Configurare Cheie API în Sidebar
 api_cheie_utilizator = st.sidebar.text_input(L["side_t"], type="password")
 foloseste_mod_demo = True
 cheie_finala = None
@@ -129,7 +137,7 @@ client = None
 if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
     client = genai.Client(api_key=cheie_finala)
 
-# 8. CITIRE SI UPLOAD DATE
+# 7. Interfață de încărcare documente
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
 
@@ -137,14 +145,20 @@ contract_final_text = ""
 if uploaded_file is not None:
     nm_f = uploaded_file.name.lower()
     if ".pdf" in nm_f:
-        try: contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
-        except Exception: pass
+        try:
+            contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
+        except Exception:
+            pass
     if ".docx" in nm_f:
-        try: contract_final_text = "\n".join([pr.text for pr in docx.Document(uploaded_file).paragraphs])
-        except Exception: pass
+        try:
+            contract_final_text = "\n".join([pr.text for pr in docx.Document(uploaded_file).paragraphs])
+        except Exception:
+            pass
     if ".txt" in nm_f:
-        try: contract_final_text = uploaded_file.read().decode("utf-8")
-        except Exception: pass
+        try:
+            contract_final_text = uploaded_file.read().decode("utf-8")
+        except Exception:
+            pass
 
 if text_manual.strip():
     contract_final_text = text_manual
@@ -152,7 +166,7 @@ if text_manual.strip():
 st.markdown("---")
 st.caption(L["disc"])
 
-# 9. EXECUȚIE APEL API GEMINI
+# 8. Buton declanșare analiză
 if st.button(L["b_start"], type="primary"):
     if foloseste_mod_demo and st.session_state["numar_utilizari"] >= LIMITA_UTILIZARI_GRATUITE:
         st.error(L["e_limita"])
@@ -167,13 +181,3 @@ if st.button(L["b_start"], type="primary"):
                 response = client.models.generate_content(
                     model='gemini-2.5-flash', 
                     contents=f"Contract:\n\n{contract_final_text}", 
-                    config=types.GenerateContentConfig(system_instruction=L["prompt"], temperature=0.2)
-                )
-                if foloseste_mod_demo: st.session_state["numar_utilizari"] += 1
-                st.session_state["rezultat_analiza"] = response.text
-                st.success(L["s_analiza"])
-                st.rerun()
-            except Exception as e: 
-                st.error(f"Eroare: {str(e)}")
-
-if "rezultat_analiza" in st.session_state:
