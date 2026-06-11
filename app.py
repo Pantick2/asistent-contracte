@@ -28,7 +28,6 @@ st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄"
 st.markdown("""<style>html, body, [data-testid="stSidebarView"] { font-family: 'Inter', sans-serif; }
 .feature-card { background-color: #f8fafc; padding: 20px; border-radius: 12px; border-left: 5px solid #0284c7; margin-bottom: 15px; }</style>""", unsafe_allow_html=True)
 
-# ⚠️ PUNE CHEIA TA REALĂ ÎNTRE GHILIMELELE DE MAI JOS:
 CHEIE_API_DEMO = "gen-lang-client-0040445167" 
 LIMITA_UTILIZARI_GRATUITE = 2
 
@@ -94,12 +93,9 @@ TEXTS = {
 st.sidebar.markdown("<h2 style='text-align: center; color: #0284c7;'>🛡️ Asistent Scut</h2>", unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
-PAGINA_ANALIZA = "Aplicație Analiză"
-PAGINA_FEEDBACK = "Feedback & Contact"
-PAGINA_TERMENI = "Termeni și Condiții"
-PAGINA_CONFIDENTIALITATE = "Politică de Confidențialitate"
+# Meniu de navigare cu denumiri fixe
+pagina_curenta = st.sidebar.radio("Navigare pagini:", ["Aplicație Analiză", "Feedback & Contact", "Termeni și Condiții", "Politică de Confidențialitate"])
 
-pagina_curenta = st.sidebar.radio("Navigare pagini:", [PAGINA_ANALIZA, PAGINA_FEEDBACK, PAGINA_TERMENI, PAGINA_CONFIDENTIALITATE])
 st.sidebar.markdown("---")
 lang = st.sidebar.selectbox(TEXTS["ro"]["sidebar_lang"], options=["ro", "en"], format_func=lambda x: "🇷🇴 Română" if x == "ro" else "🇺🇸 English")
 t = TEXTS[lang]
@@ -126,9 +122,9 @@ def citeste_contract_docx(file_obj):
     return txt_acumulat
 
 # =====================================================================
-# BLOC DIRECT DE EXECUȚIE PAGINI (FĂRĂ FUNCȚII INTERMEDIARE)
+# BLOC LOGIC DE RULARE STRUCTURAT (IF - ELIF - ELSE LEGATE STRÂNS)
 # =====================================================================
-if pagina_curenta == PAGINA_ANALIZA:
+if pagina_curenta == "Aplicație Analiză":
     st.title(t["title"])
     st.markdown(f"<p style='font-size:18px; color:#475569;'>{t['subtitle']}</p>", unsafe_allow_html=True)
     
@@ -150,4 +146,8 @@ if pagina_curenta == PAGINA_ANALIZA:
     else:
         cheie_finala = CHEIE_API_DEMO
         st.sidebar.info(f"{t['api_info']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE})")
+
+    client = None
+    if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
+        client = genai.Client(api_key=cheie_finala)
 
