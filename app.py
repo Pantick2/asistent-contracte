@@ -1,4 +1,14 @@
 import streamlit as st
+
+# Configurare aplicație (Trebuie să fie prima linie absolută)
+st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
+
+# Injectare Meta Tag direct în aplicație pentru validarea AdSense
+st.markdown(
+    '<meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">', 
+    unsafe_allow_html=True
+)
+import streamlit as st
 import streamlit.components.v1 as components
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
