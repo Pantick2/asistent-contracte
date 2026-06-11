@@ -62,12 +62,12 @@ st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
 st.sidebar.markdown("---")
 
 # =====================================================================
-# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE
+# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (URL-URI ULTRA-SCURTE)
 # =====================================================================
-pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Aplicație Analiză", default=True)
-pagina_contact = st.Page("pagini/contact.py", title="💬 Feedback & Contact")
-pagina_termeni = st.Page("pagini/termeni.py", title="⚖️ Termeni și Condiții")
-pagina_gdpr = st.Page("pagini/politica.py", title="🔒 Politica de Confidențialitate")
+pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Analiză", url_path="analiza", default=True)
+pagina_contact = st.Page("pagini/contact.py", title="💬 Contact", url_path="contact")
+pagina_termeni = st.Page("pagini/termeni.py", title="⚖️ Termeni", url_path="termeni")
+pagina_gdpr = st.Page("pagini/politica.py", title="🔒 Politică", url_path="privacy")
 
 # Generăm automat meniul din stânga securizat
 pg = st.navigation([pagina_analiza, pagina_contact, pagina_termeni, pagina_gdpr])
