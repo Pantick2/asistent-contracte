@@ -94,7 +94,7 @@ else:
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/{LIMITA_UTILIZARI_GRATUITE} analize).")
 
 client = None
-if cheie_finala and cheie_finala != "AICI_PUI_CHEIA_TA_GEMINI":
+if cheie_finala and cheie_finala != "gen-lang-client-0040445167":
     client = genai.Client(api_key=cheie_finala)
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
