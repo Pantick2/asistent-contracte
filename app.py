@@ -4,13 +4,6 @@ import streamlit as st
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
 # =====================================================================
-# ☕ ANTET GLOBAL PERMANENT (Butonul fix de donație în dreapta sus)
-# =====================================================================
-col_spatiu, col_buton = st.columns([8.5, 1.5])
-with col_buton:
-    st.link_button("Donatie / Donate", "https://linktr.ee", type="primary")
-
-# =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
 SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
@@ -24,7 +17,21 @@ except Exception:
     pass
 
 # =====================================================================
-# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (IMUNĂ LA ERORI)
+# 🌐 COMUTATORUL GLOBAL DE LIMBĂ (ÎN SIDEBAR)
+# =====================================================================
+if "limba" not in st.session_state:
+    st.session_state["limba"] = "RO"
+
+optiune_limba = st.sidebar.selectbox(
+    "🌐 Schimbă Limba / Language:",
+    ["Română (RO)", "English (EN)"],
+    index=0 if st.session_state["limba"] == "RO" else 1
+)
+
+st.session_state["limba"] = "RO" if "Română" in optiune_limba else "EN"
+
+# =====================================================================
+# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (MAPPED DIRECT PE FIȘIERE)
 # =====================================================================
 pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Aplicație Analiză", default=True)
 pagina_contact = st.Page("pagini/contact.py", title="💬 Feedback & Contact")
