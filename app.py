@@ -1,22 +1,22 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
 # =====================================================================
-# 🍪 INJECTARE GLOBALĂ POPUP COOKIE-URI + CODE GOOGLE ADSENSE
+# 🍪 INJECTARE PRIN COMPONENTĂ HTML (OBLIGATORIU PENTRU PYTHON 3.14)
 # =====================================================================
 LINK_SCRIPT_COOKIE = "https://cookie-script.com"
 COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
 
-# Injectăm scripturile direct în pagină prin markdown pentru a ocoli blocajele de iframe
-st.markdown(
-    f"""
-    <script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
-    <script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
-    """,
-    unsafe_allow_html=True
-)
+html_antet = f"""
+<script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
+<script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
+"""
+
+# Forțăm randarea scripturilor printr-o componentă nativă Streamlit
+components.html(html_antet, height=0)
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
