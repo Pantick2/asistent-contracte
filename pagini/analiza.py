@@ -15,7 +15,7 @@ if "termeni_acceptati" not in st.session_state:
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
-# Dicționarul tău complet de traduceri
+# Dicționarul tău complet de traduceri (păstrat intact)
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
@@ -77,20 +77,13 @@ st.markdown("<style>.feature-card { background-color: #f8fafc; padding: 20px; bo
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
-# =====================================================================
-# 🍪 CONSOLE POPUP COOKIE-SCRIPT GENERAT VIZIBIL LA INTRAREA ÎN SITE
-# =====================================================================
-LINK_SCRIPT_COOKIE = "https://cookie-script.com"
-COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
-
-html_fortat_intrare = f"""
-<div style="text-align: center;">
-    <script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
-    <script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
+# Injectăm scriptul într-un container invizibil de înălțime mică (0px) pentru a scoate gaura albă
+html_ad_config = f"""
+<div style="display:none;">
+    <script type="text/javascript" charset="UTF-8" src="https://cookie-script.com"></script>
 </div>
 """
-# Alocăm un spațiu fizic de 350px sus pe pagină. Popup-ul este obligat să apară vizual în el instant!
-components.html(html_fortat_intrare, height=350)
+components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
 # =====================================================================
