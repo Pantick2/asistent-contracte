@@ -6,8 +6,8 @@ COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
 LINK_SCRIPT_COOKIE = "https://cookie-script.com"
 
 # ID-urile unice ale unităților tale publicitare Display Ads
-ID_BANNER_SIDEBAR = "AICI_PUI_ID_SLOT_PENTRU_SIDEBAR"  # Pune cele 10 cifre din AdSense
-ID_BANNER_FINAL = "AICI_PUI_ID_SLOT_PENTRU_BANNER_JOS"  # Pune cele 10 cifre de la celălalt banner
+ID_BANNER_SIDEBAR = "9294641909"  # Pune cele 10 cifre din AdSense
+ID_BANNER_FINAL = "2371850766"  # Pune cele 10 cifre de la celălalt banner
 
 def genereaza_html_banner(slot_id, latime="auto", inaltime="auto"):
     # Acest container încarcă simultan și popup-ul de cookie-uri și codul AdSense de fiecare dată când este apelat
