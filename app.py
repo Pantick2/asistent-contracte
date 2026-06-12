@@ -4,34 +4,6 @@ import streamlit as st
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
 # =====================================================================
-# 🍪 INJECTARE ÎN CORPUL PRINCIPAL (SPARGE IFRAME-UL PENTRU POPUP & ADS)
-# =====================================================================
-LINK_SCRIPT_COOKIE = "https://cookie-script.com"
-COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
-
-# Folosim st.markdown cu o etichetă div specială care păcălește Streamlit și rulează scriptul direct în browserul utilizatorului
-st.markdown(
-    f"""
-    <div style="display:none;">
-        <iframe src="javascript:void(0)" style="display:none;" onload="
-            var s1 = document.createElement('script');
-            s1.type = 'text/javascript';
-            s1.charset = 'UTF-8';
-            s1.src = '{LINK_SCRIPT_COOKIE}';
-            window.parent.document.head.appendChild(s1);
-            
-            var s2 = document.createElement('script');
-            s2.async = true;
-            s2.src = 'https://googlesyndication.com{COD_CLIENT_ADSENSE}';
-            s2.crossOrigin = 'anonymous';
-            window.parent.document.head.appendChild(s2);
-        "></iframe>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
 SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
