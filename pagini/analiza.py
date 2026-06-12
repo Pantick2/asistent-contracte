@@ -15,13 +15,13 @@ if "termeni_acceptati" not in st.session_state:
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
-# Dicționarul tău complet de traduceri (păstrat intact)
+# Dicționarul de traduceri cu textul scurtat (fără paranteze)
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
         "subtitlu": "Protejează-ți drepturile. Identifică clauzele abuzive ascunse și renegociază de la egal la egal.",
         "avertisment_b2b": "⚠️ **Disclaimer Legal:** Această platformă este un instrument experimental bazat pe AI, destinat informării generale și educației contractuale.",
-        "bifa_text": "Am citit, înțeleg și accept în mod expres Termenii de Utilizare (Limitare Răspunderii la £10, Jurisdicția Milton Keynes, UK și Clauza de Non-Defăimare) și Politica de Confidențialitate (GDPR).",
+        "bifa_text": "Am citit, înțeleg și accept în mod expres Termenii de Utilizare și Politica de Confidențialitate (GDPR).",
         "blocat_text": "🔒 Pentru a accesa funcțiile de upload și analiza AI, trebuie mai întâi să bifați căsuța de acceptare a Termenilor de mai sus.",
         "ghid": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un copilot informativ. Rezultatele generate sunt strict orientative.",
         "c1": "<b>💡 Ghid de Îndrumare</b><br>Traduce clauzele contractuale complicate în cuvinte simple.",
@@ -47,7 +47,7 @@ t = {
         "titlu": "📄 Contract Negotiation Assistant",
         "subtitlu": "Protect your business. Identify hidden clauses, contractual risks, and renegotiate with confidence.",
         "avertisment_b2b": "⚠️ **Legal Disclaimer:** This platform is an experimental AI-based tool intended strictly for general informational purposes.",
-        "bifa_text": "I have read, understand, and agree to the Terms of Use (£10 Liability Cap, Milton Keynes, UK Jurisdiction) and Privacy Policy (GDPR).",
+        "bifa_text": "I have read, understand, and agree to the Terms of Use and Privacy Policy (GDPR).",
         "blocat_text": "🔒 To access upload functions and AI analysis, you must first check the box to accept the Terms above.",
         "ghid": "💡 **How to use this tool:** This site acts as an informational copilot. Generated results are strictly indicative.",
         "c1": "<b>💡 Guidance Guide</b><br>Translates complicated contractual clauses into simple terms.",
@@ -77,7 +77,7 @@ st.markdown("<style>.feature-card { background-color: #f8fafc; padding: 20px; bo
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
-# Injectăm scriptul într-un container invizibil de înălțime mică (0px) pentru a scoate gaura albă
+# Containerul ascuns care încarcă popup-ul Cookie-Script în fundal
 html_ad_config = f"""
 <div style="display:none;">
     <script type="text/javascript" charset="UTF-8" src="https://cookie-script.com"></script>
