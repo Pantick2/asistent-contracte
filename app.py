@@ -1,22 +1,35 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
 # =====================================================================
-# 🍪 INJECTARE PRIN COMPONENTĂ HTML (OBLIGATORIU PENTRU PYTHON 3.14)
+# 🍪 INJECTARE ÎN CORPUL PRINCIPAL (SPARGE IFRAME-UL PENTRU POPUP & ADS)
 # =====================================================================
 LINK_SCRIPT_COOKIE = "https://cookie-script.com"
 COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
 
-html_antet = f"""
-<script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
-<script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
-"""
-
-# Forțăm randarea scripturilor printr-o componentă nativă Streamlit
-components.html(html_antet, height=0)
+# Folosim st.markdown cu o etichetă div specială care păcălește Streamlit și rulează scriptul direct în browserul utilizatorului
+st.markdown(
+    f"""
+    <div style="display:none;">
+        <iframe src="javascript:void(0)" style="display:none;" onload="
+            var s1 = document.createElement('script');
+            s1.type = 'text/javascript';
+            s1.charset = 'UTF-8';
+            s1.src = '{LINK_SCRIPT_COOKIE}';
+            window.parent.document.head.appendChild(s1);
+            
+            var s2 = document.createElement('script');
+            s2.async = true;
+            s2.src = 'https://googlesyndication.com{COD_CLIENT_ADSENSE}';
+            s2.crossOrigin = 'anonymous';
+            window.parent.document.head.appendChild(s2);
+        "></iframe>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
