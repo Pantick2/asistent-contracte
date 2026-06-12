@@ -4,8 +4,6 @@ from google import genai
 from google.genai import types
 import docx
 import pypdf
-
-# IMPORTĂM RECLAMELE DIN FIȘIERUL SPECIAL NOMINALIZAT MAI SUS
 import ads_config
 
 if "limba" not in st.session_state:
@@ -17,13 +15,12 @@ if "termeni_acceptati" not in st.session_state:
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
-# Dicționarul tău de traduceri (păstrat intact)
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
         "subtitlu": "Protejează-ți drepturile. Identifică clauzele abuzive ascunse și renegociază de la egal la egal.",
         "avertisment_b2b": "⚠️ **Disclaimer Legal:** Această platformă este un instrument experimental bazat pe AI, destinat informării generale și educației contractuale.",
-        "bifa_text": "Am citit, înțeleg și accept în mod expres Termenii de Utilizare (inclusiv Limitarea Răspunderii la £10, Jurisdicția Milton Keynes, UK și Clauza de Non-Defăimare) și Politica de Confidențialitate (GDPR).",
+        "bifa_text": "Am citit, înțeleg și accept în mod expres Termenii de Utilizare (Limitare Răspunderii la £10, Jurisdicția Milton Keynes, UK și Clauza de Non-Defăimare) și Politica de Confidențialitate (GDPR).",
         "blocat_text": "🔒 Pentru a accesa funcțiile de upload și analiza AI, trebuie mai întâi să bifați căsuța de acceptare a Termenilor de mai sus.",
         "ghid": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un copilot informativ. Rezultatele generate sunt strict orientative.",
         "c1": "<b>💡 Ghid de Îndrumare</b><br>Traduce clauzele contractuale complicate în cuvinte simple.",
@@ -47,7 +44,7 @@ t = {
     },
     "EN": {
         "titlu": "📄 Contract Negotiation Assistant",
-        "subtitlu": "Protect your rights. Identify hidden clauses, contractual risks, and renegotiate with confidence.",
+        "subtitlu": "Protect your business. Identify hidden clauses, contractual risks, and renegotiate with confidence.",
         "avertisment_b2b": "⚠️ **Legal Disclaimer:** This platform is an experimental AI-based tool intended strictly for general informational purposes.",
         "bifa_text": "I have read, understand, and agree to the Terms of Use (£10 Liability Cap, Milton Keynes, UK Jurisdiction) and Privacy Policy (GDPR).",
         "blocat_text": "🔒 To access upload functions and AI analysis, you must first check the box to accept the Terms above.",
@@ -81,18 +78,33 @@ LIMITA_UTILIZARI_GRATUITE = 2
 
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
-
-# ZIDUL JURIDIC
 st.info(L["avertisment_b2b"])
+
+# =====================================================================
+# 📊 APELARE BANNER 1 (SIDEBAR) - INCARCA INSTANT PENTRU POPUP DEBLOCAT
+# =====================================================================
+st.sidebar.markdown("---")
+st.sidebar.caption("Advertisement")
+html_sidebar_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_SIDEBAR, latime="100%", inaltime="250px")
+components.html(html_sidebar_ad, height=270)
+# =====================================================================
+# 🔒 SISTEMUL DE BIFARE MUTAT DUPĂ RECLAMELE DE SIDEBAR
+# =====================================================================
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
 st.session_state.termeni_acceptati = accepta_termeni
 
 if not st.session_state.termeni_acceptati:
     st.warning(L["blocat_text"])
+    if "rezultat_analiza" not in st.session_state:
+        st.info(L["ghid"])
+        col1, col2, col3 = st.columns(3)
+        with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
+        with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
+        with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
     st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
     st.stop()
 
-# APELARE CHEI API
+# INTERFATA DE INPUT (APARE DUPĂ BIFA ACTIVĂ)
 api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password")
 foloseste_mod_demo = True
 cheie_finala = None
@@ -107,15 +119,6 @@ else:
 
 client = genai.Client(api_key=cheie_finala) if cheie_finala else None
 
-# =====================================================================
-# 📊 APELARE BANNER 1 DIN FIȘIERUL EXTERN (SIDEBAR JOS)
-# =====================================================================
-st.sidebar.markdown("---")
-st.sidebar.caption("Advertisement")
-html_sidebar_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_SIDEBAR, latime="100%", inaltime="250px")
-components.html(html_sidebar_ad, height=270)
-
-# CONȚINUT CENTRAL APLICAȚIE
 if "rezultat_analiza" not in st.session_state:
     st.info(L["ghid"])
     col1, col2, col3 = st.columns(3)
@@ -162,14 +165,10 @@ if st.button(L["b_start"], type="primary"):
                 st.rerun()
             except Exception as e: st.error(f"Eroare: {str(e)}")
 
-# =====================================================================
-# 📊 APELARE BANNER 2 DIN FIȘIERUL EXTERN (SUB RAPORT)
-# =====================================================================
 if "rezultat_analiza" in st.session_state:
     st.markdown(L["rap_t"])
     st.markdown(st.session_state["rezultat_analiza"])
     st.download_button(label=L["b_down"], data=st.session_state["rezultat_analiza"], file_name="analiza.txt", mime="text/plain")
-    
     st.markdown("---")
     html_final_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_FINAL, latime="100%", inaltime="90px")
     components.html(html_final_ad, height=110)
