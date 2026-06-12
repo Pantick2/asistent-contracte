@@ -1,19 +1,22 @@
 # =====================================================================
-# ⚙️ FIȘIER CENTRALIZAT PENTRU MONETIZARE (COMPATIBIL PYTHON 3.14)
+# ⚙️ FIȘIER CENTRALIZAT PENTRU MONETIZARE UNIFICATĂ (PC + MOBIL)
 # =====================================================================
 
 COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
 LINK_SCRIPT_COOKIE = "https://cookie-script.com"
 
-# ⚠️ Înlocuiește cu cele 10 cifre reale din panoul tău Google AdSense:
+# ID-urile unităților tale publicitare Display Ads (Responsive)
 ID_BANNER_SIDEBAR = "9294641909"  
 ID_BANNER_FINAL = "2371850766"  
 
 def genereaza_html_banner(slot_id, latime="auto", inaltime="auto"):
-    # Închidem scripturile într-o structură protejată care forțează browserul să le execute
+    # Forțăm injectarea scriptului cu prioritate maximă pentru ecranele mobile
     return f"""
     <div style="text-align: center; margin: 10px 0;">
-        <script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
+        <!-- Înrcărcăm scriptul de cookie-uri cu atribute de forțare mobilă -->
+        <script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}" data-cs-viewport="true"></script>
+        
+        <!-- Scriptul general de reclame Google AdSense (Valabil PC + Telefon) -->
         <script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
         
         <ins class="adsbygoogle"
