@@ -1,7 +1,21 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
+
+# =====================================================================
+# 🍪 INJECTARE INSTANT POPUP COOKIE-URI + CODE GOOGLE ADSENSE (LA INTRARE)
+# =====================================================================
+LINK_SCRIPT_COOKIE = "https://cookie-script.com"
+COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
+
+html_instant_popup = f"""
+<script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
+<script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
+"""
+# Rulăm scripturile într-o componentă globală vizibilă de 1 pixel înălțime, forțând popup-ul să sară pe ecran
+components.html(html_instant_popup, height=1)
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
@@ -37,19 +51,6 @@ st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
 st.sidebar.markdown("---")
 
 # =====================================================================
-# 🍪 INJECTARE FORCE-POPUP ÎN SIDEBAR HTML (DEBLOCARE TOTALĂ)
-# =====================================================================
-LINK_SCRIPT_COOKIE = "https://cookie-script.com"
-COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
-
-# Injectarea direct în interiorul structurii Sidebar-ului forțează browserul să ruleze scriptul instant la deschidere
-html_sidebar_inject = f"""
-<script type="text/javascript" charset="UTF-8" src="{LINK_SCRIPT_COOKIE}"></script>
-<script async src="https://googlesyndication.com{COD_CLIENT_ADSENSE}" crossorigin="anonymous"></script>
-"""
-st.sidebar.html(html_sidebar_inject)
-
-# =====================================================================
 # STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (URL-URI ULTRA-SCURTE)
 # =====================================================================
 pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Analiză", url_path="analiza", default=True)
@@ -57,6 +58,5 @@ pagina_contact = st.Page("pagini/contact.py", title="💬 Contact", url_path="co
 pagina_termeni = st.Page("pagini/termeni.py", title="⚖️ Termeni", url_path="termeni")
 pagina_gdpr = st.Page("pagini/politica.py", title="🔒 Politică", url_path="privacy")
 
-# Generăm automat meniul din stânga securizat
 pg = st.navigation([pagina_analiza, pagina_contact, pagina_termeni, pagina_gdpr])
 pg.run()
