@@ -1,15 +1,12 @@
 import streamlit as st
+import streamlit as st
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-# Injectare cod AdSense în secțiunea <head> a paginii
-st.markdown(
-    """
-    <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
-    """, 
-    unsafe_allow_html=True
-)
+# 🔍 VERIFICARE METATAG GOOGLE ADSENSE
+st.markdown('<meta name="google-adsense-account" content="ca-pub-3528838516008000">', unsafe_allow_html=True)
+
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
