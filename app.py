@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit as st
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
