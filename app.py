@@ -1,15 +1,14 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-# 🔍 COD DE VERIFICARE GOOGLE ADSENSE
-components.html(
+# Injectare cod AdSense în secțiunea <head> a paginii
+st.markdown(
     """
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3528838516008000" crossorigin="anonymous"></script>
-    """,
-    height=0
+    <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
+    """, 
+    unsafe_allow_html=True
 )
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
