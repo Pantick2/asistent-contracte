@@ -1,7 +1,12 @@
 import streamlit as st
 
-# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
+# 1. CONFIGURARE APLICAȚIE
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
+
+# 📄 AFIȘARE ADS.TXT PENTRU GOOGLE
+if "ads.txt" in st.experimental_get_query_params() or st.context.headers.get("X-Recompute-For") == "ads.txt":
+    st.text("google.com, pub-3528838516008000, DIRECT, f08c47fec0942fa0")
+    st.stop()
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
