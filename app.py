@@ -4,9 +4,6 @@ import streamlit as st
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-# 🔍 VERIFICARE METATAG GOOGLE ADSENSE
-st.markdown('<meta name="google-adsense-account" content="ca-pub-3528838516008000">', unsafe_allow_html=True)
-
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
