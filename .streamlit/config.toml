@@ -1,12 +1,3 @@
-[browser]
-gatherUsageStats = false
-
 [server]
 headless = true
-
-# Injectare automată în secțiunea <head>
-[html]
-script = """
-<script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
-<meta name="google-adsense-account" content="ca-pub-3528838516008000">
-"""
+enableStaticServing = true
