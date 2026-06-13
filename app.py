@@ -3,8 +3,8 @@ import streamlit as st
 # 1. CONFIGURARE APLICAȚIE
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-# 📄 AFIȘARE ADS.TXT PENTRU GOOGLE (Versiunea nouă Streamlit)
-if "ads.txt" in st.query_params:
+# 📄 AFIȘARE ADS.TXT PENTRU GOOGLE (Metodă compatibilă 100% cu noua versiune)
+if "page" in st.query_params and st.query_params["page"] == "ads.txt":
     st.text("google.com, pub-3528838516008000, DIRECT, f08c47fec0942fa0")
     st.stop()
 
