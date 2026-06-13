@@ -1,14 +1,12 @@
 import streamlit as st
-import streamlit as st
-import os
 
-# 1. CONFIGURARE APLICAȚIE
+# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-# Verificare automată pentru fișiere publice (ex: ads.txt)
-if os.path.exists("public/ads.txt"):
-    # Această linie ajută serverul să servească fișierul în rădăcină
-    pass
+# 🔍 INTERCEPTARE ȘI AFIȘARE DIRECTĂ ADS.TXT PENTRU GOOGLE
+if "X-Recompute-For" in st.context.headers or "ads.txt" in st.query_params:
+    st.text("google.com, pub-3528838516008000, DIRECT, f08c47fec0942fa0")
+    st.stop()
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
