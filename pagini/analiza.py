@@ -123,22 +123,16 @@ api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password",
 foloseste_mod_demo = True
 cheie_finala = None
 
-if cheie_finala:
-    try:
-        import os
-        os.environ["GEMINI_API_KEY"] = cheie_finala.strip()
-        genai.configure()
-        client = genai
-    except Exception:
-        client = None
-
+if api_cheie_utilizator.strip():
+    cheie_finala = api_cheie_utilizator.strip()
+    foloseste_mod_demo = False
+    st.sidebar.success(L["side_s"])
 else:
-    cheie_finala = "AQ.Ab8RN6KTlQ9nJvd9vAJf5Jh0yq2q5s6vHdhPYJ1u8eC-WQHGTg"
+    cheie_finala = "AQ.Ab8RN6KTiQ9nJvd9vAJf5JHeyq2qSs6vMdhPYJ1u8eC-WQHGtg"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
     try:
-        # Dacă cheia este de tip nou (AQ.), o configurăm prin metoda de mediu securizată
         import os
         os.environ["GEMINI_API_KEY"] = cheie_finala
         genai.configure()
@@ -157,6 +151,7 @@ if "rezultat_analiza" not in st.session_state:
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
+
 contract_final_text = ""
 if uploaded_file is not None:
     nm_f = uploaded_file.name.lower()
