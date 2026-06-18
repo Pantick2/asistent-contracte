@@ -128,14 +128,13 @@ if api_cheie_utilizator.strip():
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    cheie_finala = "AQ.Ab8RN6KTiQ9nJvd9vAJf5JHeyq2qSs6vMdhPYJ1u8eC-WQHGtg"
+    # Preia cheia demo în mod securizat din setările serverului
+    cheie_finala = st.secrets.get("GEMINI_API_KEY", None)
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
     try:
-        import os
-        os.environ["GEMINI_API_KEY"] = cheie_finala
-        genai.configure()
+        genai.configure(api_key=cheie_finala)
         client = genai
     except Exception:
         client = None
