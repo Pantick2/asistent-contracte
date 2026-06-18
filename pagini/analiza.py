@@ -203,11 +203,7 @@ if api_cheie_utilizator.strip():
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    # IMPORTANT: Preia cheia demo din Secrets pentru securitate și funcționalitate
-    if "GEMINI_API_KEY" in st.secrets:
-        cheie_finala = st.secrets["GEMINI_API_KEY"]
-    else:
-        cheie_finala = "AIzaSyFakeKeyPentruCaAdSenseSaNuDeaEroareLaCompilare"
+    cheie_finala = "gen-lang-client-0040445167"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
