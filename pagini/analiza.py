@@ -180,7 +180,7 @@ if st.button(L["b_start"], type="primary"):
         with st.spinner(L["spinner"]):
             try:
                 prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
-                model = genai.GenerativeModel("gemini-1.5-flash")
+                model = genai.GenerativeModel("models/gemini-1.5-flash")
                 response = model.generate_content(prompt_complet)
                 
                 st.session_state["rezultat_analiza"] = response.text
