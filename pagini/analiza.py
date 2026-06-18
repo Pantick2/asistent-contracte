@@ -14,15 +14,18 @@ if "termeni_acceptati" not in st.session_state:
 if "numar_utilizari" not in st.session_state:
     st.session_state["numar_utilizari"] = 0
 
+if "rezultat_analiza" not in st.session_state:
+    st.session_state["rezultat_analiza"] = None
+
 # Dicționarul de traduceri cu textul scurtat (fără paranteze)
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
         "subtitlu": "Protejează-ți drepturile. Identifică clauzele abuzive ascunse și renegociază de la egal la egal.",
         "avertisment_b2b": "⚠️ **Disclaimer Legal:** Această platformă este un instrument experimental bazat pe AI, destinat informării generale și educației contractuale.",
-        "bifa_text": "Am citit, înțeleg și accept în mod expres Termenii de Utilizare și Politica de Confidențialitate (GDPR).",
+        "bifa_text": "Am citit, înțeleg și accept în mod exprimat Termenii de Utilizare și Politica de Confidențialitate (GDPR).",
         "blocat_text": "🔒 Pentru a accesa funcțiile de upload și analiza AI, trebuie mai întâi să bifați căsuța de acceptare a Termenilor de mai sus.",
-        "ghid": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un copilot informativ. Rezultatele generate sunt strict orientative.",
+        "ghid": "💡 **How to use this tool:** Acest site funcționează ca un copilot informativ. Rezultatele generate sunt strict orientative.",
         "c1": "<b>💡 Ghid de Îndrumare</b><br>Traduce clauzele contractuale complicate în cuvinte simple.",
         "c2": "<b>🚩 Alertă Clauze Ascunse</b><br>Semnalează penalitățile disproporționate sau termenele abuzive.",
         "c3": "<b>🗣️ Idei de Renegociere</b><br>Îți oferă argumente și formulări politicoase.",
@@ -85,13 +88,17 @@ html_ad_config = f"""
 components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
+
 # =====================================================================
-# 📊 APELARE BANNER 1 (SIDEBAR) - INCARCA INSTANT PENTRU POPUP DEBLOCAT
+# 📊 APELARE BANNER 1 (SIDEBAR)
 # =====================================================================
 st.sidebar.markdown("---")
 st.sidebar.caption("Advertisement")
-html_sidebar_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_SIDEBAR, latime="100%", inaltime="250px")
-components.html(html_sidebar_ad, height=270)
+try:
+    html_sidebar_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_SIDEBAR, latime="100%", inaltime="250px")
+    components.html(html_sidebar_ad, height=270)
+except Exception:
+    pass
 
 # =====================================================================
 # 🔒 SISTEMUL DE BIFARE CONTRACTUAL
@@ -99,6 +106,80 @@ components.html(html_sidebar_ad, height=270)
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
 st.session_state.termeni_acceptati = accepta_termeni
 
+# Configurare cheie API pentru modulul demo / cheie proprie
+cheie_personala = st.sidebar.text_input("Gemini API Key:", type="password")
+foloseste_mod_demo = True
+
+if cheie_personala:
+    genai.configure(api_key=cheie_personala)
+    foloseste_mod_demo = False
+    st.sidebar.success(L["side_s"])
+else:
+    # Încearcă să încarce cheia demo din st.secrets
+    if "GEMINI_API_KEY" in st.secrets:
+        genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+        st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2)")
+    else:
+        st.sidebar.warning(L["e_config"])
+
+# Blocare / Deblocare interfață în funcție de bifă
+if not accepta_termeni:
+    st.warning(L["blocat_text"])
+    col1, col2, col3 = st.columns(3)
+    with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
+    with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
+    with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
+else:
+    # Interfața de lucru activă
+    fisier_incarcat = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
+    text_manual = st.text_area(L["tx_t"], height=200)
+    st.caption(L["disc"])
+
+    if st.button(L["b_start"], type="primary"):
+        if foloseste_mod_demo and st.session_state["numar_utilizari"] >= 2:
+            st.error(L["e_limita"])
+        else:
+            contract_final_text = ""
+            
+            # Extragere din fișier dacă există
+            if fisier_incarcat is not None:
+                if fisier_incarcat.name.endswith(".txt"):
+                    contract_final_text = fisier_incarcat.read().decode("utf-8")
+                elif fisier_incarcat.name.endswith(".docx"):
+                    doc = docx.Document(fisier_incarcat)
+                    contract_final_text = "\n".join([p.text for p in doc.paragraphs])
+                elif fisier_incarcat.name.endswith(".pdf"):
+                    pdf_reader = pypdf.PdfReader(fisier_incarcat)
+                    contract_final_text = "\n".join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
+            else:
+                contract_final_text = text_manual
+
+            if not contract_final_text.strip():
+                st.error(L["e_text"])
+            else:
+                with st.spinner(L["spinner"]):
+                    try:
+                        prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
+                        model = genai.GenerativeModel("gemini-1.5-flash")
+                        response = model.generate_content(prompt_complet)
+                        
+                        st.session_state["rezultat_analiza"] = response.text
+                        if foloseste_mod_demo:
+                            st.session_state["numar_utilizari"] += 1
+                        st.success(L["succes"])
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Eroare AI: {str(e)}")
+
+    # Afișare rezultate salvate în sesiune
+    if st.session_state["rezultat_analiza"]:
+        st.markdown("---")
+        st.markdown(L["rap_t"])
+        st.markdown(st.session_state["rezultat_analiza"])
+        st.download_button(L["b_down"], data=st.session_state["rezultat_analiza"], file_name="raport_audit.txt", mime="text/plain")
+
+st.markdown("---")
+st.caption(L["subsol"])
 if not st.session_state.termeni_acceptati:
     st.warning(L["blocat_text"])
     if "rezultat_analiza" not in st.session_state:
@@ -109,6 +190,7 @@ if not st.session_state.termeni_acceptati:
         with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
     st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
     st.stop()
+
 # =====================================================================
 # INTERFATA DE INPUT (APARE DUPĂ BIFA ACTIVĂ)
 # =====================================================================
@@ -117,11 +199,15 @@ foloseste_mod_demo = True
 cheie_finala = None
 
 if api_cheie_utilizator.strip():
-    cheie_finala = api_cheie_utilizator
+    cheie_finala = api_cheie_utilizator.strip()
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    cheie_finala = "gen-lang-client-0040445167"
+    # IMPORTANT: Preia cheia demo din Secrets pentru securitate și funcționalitate
+    if "GEMINI_API_KEY" in st.secrets:
+        cheie_finala = st.secrets["GEMINI_API_KEY"]
+    else:
+        cheie_finala = "AIzaSyFakeKeyPentruCaAdSenseSaNuDeaEroareLaCompilare"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
@@ -146,14 +232,15 @@ if uploaded_file is not None:
     if ".pdf" in nm_f:
         try: contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
         except Exception: pass
-    if ".docx" in nm_f:
+    elif ".docx" in nm_f:
         try: contract_final_text = "\n".join([pr.text for pr in docx.Document(uploaded_file).paragraphs])
         except Exception: pass
-    if ".txt" in nm_f:
+    elif ".txt" in nm_f:
         try: contract_final_text = uploaded_file.read().decode("utf-8")
         except Exception: pass
 
-if text_manual.strip(): contract_final_text = text_manual
+if text_manual.strip(): 
+    contract_final_text = text_manual
 
 st.markdown("---")
 st.caption(L["disc"])
@@ -168,19 +255,32 @@ if st.button(L["b_start"], type="primary"):
         st.error(L["e_config"])
     else:
         with st.spinner(L["spinner"]):
-           try: response = genai.GenerativeModel("gemini-1.5-flash").generate_content(f"Contract:\n\n{contract_final_text}"); st.session_state["rezultat_analiza"] = response.text; st.success(L["succes"]); st.rerun() if foloseste_mod_demo: st.session_state["numar_utilizari"] += 1
-    except Exception as e: st.error(f"Eroare: {str(e)}")
+            try:
+                prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                response = model.generate_content(prompt_complet)
+                
+                st.session_state["rezultat_analiza"] = response.text
+                if foloseste_mod_demo:
+                    st.session_state["numar_utilizari"] += 1
+                st.success(L["succes"])
+                st.rerun()
+            except Exception as e:
+                st.error(f"Eroare AI: {str(e)}")
 
 # =====================================================================
 # REZULTATE ȘI BANNER INTERN (MĂRIT PENTRU LOC POPUP)
 # =====================================================================
-if "rezultat_analiza" in st.session_state:
+if "rezultat_analiza" in st.session_state and st.session_state["rezultat_analiza"]:
     st.markdown(L["rap_t"])
     st.markdown(st.session_state["rezultat_analiza"])
     st.download_button(label=L["b_down"], data=st.session_state["rezultat_analiza"], file_name="analiza.txt", mime="text/plain")
     
     st.markdown("---")
-    html_final_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_FINAL, latime="100%", inaltime="90px")
-    components.html(html_final_ad, height=400)
+    try:
+        html_final_ad = ads_config.genereaza_html_banner(ads_config.ID_BANNER_FINAL, latime="100%", inaltime="90px")
+        components.html(html_final_ad, height=400)
+    except Exception:
+        pass
 
 st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
