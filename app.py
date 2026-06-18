@@ -3,11 +3,16 @@ import streamlit as st
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
 
-# 📢 CODUL INJECTAT PENTRU GOOGLE ADSENSE (Adăugat acum)
+# 📢 INJECTARE COD GOOGLE ADSENSE IN HEAD
 cod_adsense = """
 <script async src="https://googlesyndication.com" crossorigin="anonymous"></script>
 """
 st.components.v1.html(f"<script>window.parent.document.head.insertAdjacentHTML('beforeend', `{cod_adsense}`);</script>", height=0)
+
+# 🔍 INTERCEPTARE ȘI AFIȘARE DIRECTĂ ADS.TXT PENTRU GOOGLE
+if "X-Recompute-For" in st.context.headers or "ads.txt" in st.query_params:
+    st.text("google.com, pub-3528838516008000, DIRECT, f08c47fec0942fa0")
+    st.stop()
 
 # 🔍 INTERCEPTARE ȘI AFIȘARE DIRECTĂ ADS.TXT PENTRU GOOGLE (Rămâne neschimbat)
 if "X-Recompute-For" in st.context.headers or "ads.txt" in st.query_params:
