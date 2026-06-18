@@ -128,8 +128,8 @@ if api_cheie_utilizator.strip():
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    # Preia cheia demo în mod securizat din setările serverului
-    cheie_finala = st.secrets.get("GEMINI_API_KEY", None)
+    # Citește cheia în siguranță din fișierul secrets.toml pe care tocmai l-am creat
+    cheie_finala = st.secrets["GEMINI_API_KEY"]
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
