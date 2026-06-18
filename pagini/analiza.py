@@ -134,10 +134,13 @@ else:
 
 if cheie_finala:
     try:
-        genai.configure(api_key=cheie_finala)
+        import os
+        os.environ["GEMINI_API_KEY"] = cheie_finala
+        genai.configure()
         client = genai
     except Exception:
         client = None
+
 else:
     client = None
 
