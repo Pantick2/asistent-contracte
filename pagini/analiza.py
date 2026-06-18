@@ -124,7 +124,11 @@ else:
     cheie_finala = "gen-lang-client-0040445167"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
-client = genai.Client(api_key=cheie_finala) if cheie_finala else None
+if cheie_finala:
+    genai.configure(api_key=cheie_finala)
+    client = genai
+else:
+    client = None
 
 if "rezultat_analiza" not in st.session_state:
     st.info(L["ghid"])
