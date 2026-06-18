@@ -168,12 +168,7 @@ if st.button(L["b_start"], type="primary"):
         st.error(L["e_config"])
     else:
         with st.spinner(L["spinner"]):
-               try:
-        response = genai.GenerativeModel("gemini-1.5-flash").generate_content(f"Contract:\n\n{contract_final_text}")
-        if foloseste_mod_demo: st.session_state["numar_utilizari"] += 1
-        st.session_state["rezultat_analiza"] = response.text
-        st.success(L["succes"])
-        st.rerun()
+           try: response = genai.GenerativeModel("gemini-1.5-flash").generate_content(f"Contract:\n\n{contract_final_text}"); st.session_state["rezultat_analiza"] = response.text; st.success(L["succes"]); st.rerun() if foloseste_mod_demo: st.session_state["numar_utilizari"] += 1
     except Exception as e: st.error(f"Eroare: {str(e)}")
 
 # =====================================================================
