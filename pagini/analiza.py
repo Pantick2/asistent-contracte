@@ -115,12 +115,8 @@ if cheie_personala:
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    # Încearcă să încarce cheia demo din st.secrets
-    if "GEMINI_API_KEY" in st.secrets:
-        genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-        st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2)")
-    else:
-        st.sidebar.warning(L["e_config"])
+    cheie_finala = "gen-lang-client-0040445167"
+    st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 # Blocare / Deblocare interfață în funcție de bifă
 if not accepta_termeni:
