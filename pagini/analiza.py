@@ -128,7 +128,7 @@ if api_cheie_utilizator.strip():
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    cheie_finala = "AQ.Ab8RN6J85Np2xrOCgJGWwBjIEEqAg37Je3saux0u_CtCUI63yw"
+    cheie_finala = "AQ.Ab8RN6KTlQ9nJvd9vAJf5Jh0yq2q5s6vHdhPYJ1u8eC-WQHGTg"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
