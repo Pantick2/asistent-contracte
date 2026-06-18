@@ -17,7 +17,7 @@ if "numar_utilizari" not in st.session_state:
 if "rezultat_analiza" not in st.session_state:
     st.session_state["rezultat_analiza"] = None
 
-# Dicționarul de traduceri cu textul scurtat (fără paranteze)
+# Dicționarul de traduceri
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
@@ -79,7 +79,7 @@ st.markdown("<style>.feature-card { background-color: #f8fafc; padding: 20px; bo
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
-# Containerul ascuns care încarcă popup-ul Cookie-Script în fundal
+# Containerul ascuns pentru popup-ul Cookie-Script
 html_ad_config = f"""
 <div style="display:none;">
     <script type="text/javascript" charset="UTF-8" src="https://cookie-script.com"></script>
@@ -99,83 +99,12 @@ try:
     components.html(html_sidebar_ad, height=270)
 except Exception:
     pass
-
 # =====================================================================
 # 🔒 SISTEMUL DE BIFARE CONTRACTUAL
 # =====================================================================
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
 st.session_state.termeni_acceptati = accepta_termeni
 
-# Configurare cheie API pentru modulul demo / cheie proprie
-cheie_personala = st.sidebar.text_input("Gemini API Key:", type="password")
-foloseste_mod_demo = True
-
-if cheie_personala:
-    genai.configure(api_key=cheie_personala)
-    foloseste_mod_demo = False
-    st.sidebar.success(L["side_s"])
-else:
-    cheie_finala = "gen-lang-client-0040445167"
-    st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
-
-# Blocare / Deblocare interfață în funcție de bifă
-if not accepta_termeni:
-    st.warning(L["blocat_text"])
-    col1, col2, col3 = st.columns(3)
-    with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
-    with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
-    with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
-else:
-    # Interfața de lucru activă
-    fisier_incarcat = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
-    text_manual = st.text_area(L["tx_t"], height=200)
-    st.caption(L["disc"])
-
-    if st.button(L["b_start"], type="primary"):
-        if foloseste_mod_demo and st.session_state["numar_utilizari"] >= 2:
-            st.error(L["e_limita"])
-        else:
-            contract_final_text = ""
-            
-            # Extragere din fișier dacă există
-            if fisier_incarcat is not None:
-                if fisier_incarcat.name.endswith(".txt"):
-                    contract_final_text = fisier_incarcat.read().decode("utf-8")
-                elif fisier_incarcat.name.endswith(".docx"):
-                    doc = docx.Document(fisier_incarcat)
-                    contract_final_text = "\n".join([p.text for p in doc.paragraphs])
-                elif fisier_incarcat.name.endswith(".pdf"):
-                    pdf_reader = pypdf.PdfReader(fisier_incarcat)
-                    contract_final_text = "\n".join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
-            else:
-                contract_final_text = text_manual
-
-            if not contract_final_text.strip():
-                st.error(L["e_text"])
-            else:
-                with st.spinner(L["spinner"]):
-                    try:
-                        prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
-                        model = genai.GenerativeModel("gemini-1.5-flash")
-                        response = model.generate_content(prompt_complet)
-                        
-                        st.session_state["rezultat_analiza"] = response.text
-                        if foloseste_mod_demo:
-                            st.session_state["numar_utilizari"] += 1
-                        st.success(L["succes"])
-                        st.rerun()
-                    except Exception as e:
-                        st.error(f"Eroare AI: {str(e)}")
-
-    # Afișare rezultate salvate în sesiune
-    if st.session_state["rezultat_analiza"]:
-        st.markdown("---")
-        st.markdown(L["rap_t"])
-        st.markdown(st.session_state["rezultat_analiza"])
-        st.download_button(L["b_down"], data=st.session_state["rezultat_analiza"], file_name="raport_audit.txt", mime="text/plain")
-
-st.markdown("---")
-st.caption(L["subsol"])
 if not st.session_state.termeni_acceptati:
     st.warning(L["blocat_text"])
     if "rezultat_analiza" not in st.session_state:
@@ -190,7 +119,7 @@ if not st.session_state.termeni_acceptati:
 # =====================================================================
 # INTERFATA DE INPUT (APARE DUPĂ BIFA ACTIVĂ)
 # =====================================================================
-api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password")
+api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_originala")
 foloseste_mod_demo = True
 cheie_finala = None
 
@@ -203,8 +132,11 @@ else:
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
-    genai.configure(api_key=cheie_finala)
-    client = genai
+    try:
+        genai.configure(api_key=cheie_finala)
+        client = genai
+    except Exception:
+        client = None
 else:
     client = None
 
@@ -217,7 +149,6 @@ if "rezultat_analiza" not in st.session_state:
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
-
 contract_final_text = ""
 if uploaded_file is not None:
     nm_f = uploaded_file.name.lower()
@@ -261,7 +192,7 @@ if st.button(L["b_start"], type="primary"):
                 st.error(f"Eroare AI: {str(e)}")
 
 # =====================================================================
-# REZULTATE ȘI BANNER INTERN (MĂRIT PENTRU LOC POPUP)
+# REZULTATE ȘI BANNER INTERN 
 # =====================================================================
 if "rezultat_analiza" in st.session_state and st.session_state["rezultat_analiza"]:
     st.markdown(L["rap_t"])
