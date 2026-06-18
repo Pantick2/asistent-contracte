@@ -123,10 +123,15 @@ api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password",
 foloseste_mod_demo = True
 cheie_finala = None
 
-if api_cheie_utilizator.strip():
-    cheie_finala = api_cheie_utilizator.strip()
-    foloseste_mod_demo = False
-    st.sidebar.success(L["side_s"])
+if cheie_finala:
+    try:
+        import os
+        os.environ["GEMINI_API_KEY"] = cheie_finala.strip()
+        genai.configure()
+        client = genai
+    except Exception:
+        client = None
+
 else:
     cheie_finala = "AQ.Ab8RN6KTlQ9nJvd9vAJf5Jh0yq2q5s6vHdhPYJ1u8eC-WQHGTg"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
