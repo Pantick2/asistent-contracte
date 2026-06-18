@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from google import genai
+import google.generativeai as genai
+
 from google.genai import types
 import docx
 import pypdf
