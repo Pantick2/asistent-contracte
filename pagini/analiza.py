@@ -1,8 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import google.generativeai as genai
-
-from google.genai import types
+from google.generativeai import types
 import docx
 import pypdf
 import ads_config
