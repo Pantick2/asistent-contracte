@@ -155,17 +155,16 @@ if st.button(L["b_start"], type="primary"):
     else:
         with st.spinner(L["spinner"]):
             try:
+                        try:
                 # Configurează cheia utilizatorului direct în sistemul de operare înainte de apel
                 import os
                 os.environ["GEMINI_API_KEY"] = cheie_finala
-                genai.configure()
+                
+                # Forțează utilizarea serverului stabil v1 de producție la configurare
+                genai.configure(client_options={"api_version": "v1"})
                 
                 prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
-                # Forțează utilizarea serverului stabil v1 de producție, eliminând eroarea 401 a cheilor noi
-model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-flash",
-    generation_config={"api_version": "v1"}
-)
+                model = genai.GenerativeModel("models/gemini-1.5-flash")
                 response = model.generate_content(prompt_complet)
                 
                 st.session_state["rezultat_analiza"] = response.text
