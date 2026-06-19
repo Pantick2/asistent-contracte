@@ -1,17 +1,17 @@
 import streamlit as st
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
-st.set_page_config(page_title="Asistent Contracte Freelanceri", page_icon="📄", layout="wide")
+st.set_page_config(page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide")
 
 # 🔍 INTERCEPTARE ȘI AFIȘARE DIRECTĂ ADS.TXT PENTRU GOOGLE
-if "X-Recompute-For" in st.context.headers or "ads.txt" in st.query_params:
+if "X-Recompute-For" in st.context.headers or "ads.txt" in st.context.cookies or "ads.txt" in st.query_params:
     st.text("google.com, pub-3528838516008000, DIRECT, f08c47fec0942fa0")
     st.stop()
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
-SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_Liak_Studio_ASIST_SCUT_2026"
+SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_LIAK_STUDIO_ASIST_SCUT_2026"
 try:
     with open(__file__, "r", encoding="utf-8") as f:
         if "IULIAN_ICHIM_UNGUREANU" not in f.read():
@@ -21,33 +21,38 @@ except Exception:
     pass
 
 # =====================================================================
-# 🌐 COMUTATOR GLOBAL DE LIMBĂ (ÎN SIDEBAR)
+# 🌐 COMUTATOR GLOBAL DE LIMBĂ - IMPLICIT PE ENGLEZĂ (EN)
 # =====================================================================
 if "limba" not in st.session_state:
-    st.session_state["limba"] = "RO"
+    st.session_state["limba"] = "EN"
 
 optiune_limba = st.sidebar.selectbox(
-    "🌐 Schimbă Limba / Language:",
-    ["Română (RO)", "English (EN)"],
-    index=0 if st.session_state["limba"] == "RO" else 1
+    "🌐 Language / Schimbă Limba:",
+    ["English (EN)", "Română (RO)"],
+    index=0
 )
-st.session_state["limba"] = "RO" if "Română" in optiune_limba else "EN"
+st.session_state["limba"] = "EN" if "English" in optiune_limba else "RO"
 
 # =====================================================================
 # ☕ BUTONUL PERMANENT DE DONAȚII (ÎN SIDEBAR)
 # =====================================================================
 st.sidebar.markdown("---")
 text_buton_donatie = "☕ Donate" if st.session_state["limba"] == "EN" else "☕ Donatie"
-st.sidebar.link_button(text_buton_donatie, "https://linktr.ee/safescanallergyscan", type="primary")
+st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
 st.sidebar.markdown("---")
 
 # =====================================================================
-# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE
+# STRUCTURĂ OFICIALĂ DE PAGINI MULTI-PAGE (Meniu în Engleză nativ)
 # =====================================================================
-pagina_analiza = st.Page("pagini/analiza.py", title="🔍 Analiză", url_path="analiza", default=True)
-pagina_contact = st.Page("pagini/contact.py", title="💬 Contact", url_path="contact")
-pagina_termeni = st.Page("pagini/termeni.py", title="⚖️ Termeni", url_path="termeni")
-pagina_gdpr = st.Page("pagini/politica.py", title="🔒 Politică", url_path="privacy")
+titlu_analiza = "🔍 Analysis" if st.session_state["limba"] == "EN" else "🔍 Analiză"
+titlu_contact = "💬 Contact"
+titlu_termeni = "⚖️ Terms of Use" if st.session_state["limba"] == "EN" else "⚖️ Termeni"
+titlu_politica = "🔒 Privacy Policy" if st.session_state["limba"] == "EN" else "🔒 Politică"
+
+pagina_analiza = st.Page("pagini/analiza.py", title=titlu_analiza, url_path="analiza", default=True)
+pagina_contact = st.Page("pagini/contact.py", title=titlu_contact, url_path="contact")
+pagina_termeni = st.Page("pagini/termeni.py", title=titlu_termeni, url_path="termeni")
+pagina_gdpr = st.Page("pagini/politica.py", title=titlu_politica, url_path="privacy")
 
 pg = st.navigation([pagina_analiza, pagina_contact, pagina_termeni, pagina_gdpr])
 pg.run()
