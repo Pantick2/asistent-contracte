@@ -29,7 +29,7 @@ if st.session_state["limba"] == "RO":
     st.markdown("* **6.2. CLAUZĂ PENALĂ PENTRU CAMPANII DE DENIGRARE:** Utilizatorul se obligă să nu inițieze și să nu participe la nicio campanie publică de hărțuire, denigrare sau defăimare împotriva Platformei sau a administratorului (pe rețele sociale, forumuri sau Linktree). În caz de încălcare, în baza principiului daunelor pre-evaluate (Liquidated Damages), utilizatorul se obligă irevocabil să achite administratorului daune-interese în cuantum fix de **1.000 GBP pentru fiecare postare hărțuitoare distinctă**.")
     st.markdown("### 7. RENUNȚAREA LA PROCESE COLECTIVE (CLASS ACTION WAIVER)")
     st.markdown("Orice procedură se va desfășura strict pe bază individuală. Utilizatorul renunță în mod expres la dreptul de a participa ca reclamant sau membru într-un proces colectiv (Class Action) în fața oricărei instanțe din lume.")
-    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
+    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Liak Studio)</center>", unsafe_allow_html=True)
 else:
     st.title("⚖️ Terms and Conditions of Use")
     st.caption("Last Updated: June 2026 | Legal Venue: Milton Keynes, UK")
@@ -56,4 +56,4 @@ else:
     st.markdown("* **6.2. LIQUIDATED DAMAGES FOR ONLINE HARASSMENT:** Public campaigns of harassment, defamation, or disparagement against the Platform or the administrator (on social media, forums, or Linktree) are strictly prohibited. In case of breach, the user irrevocably agrees to pay fixed liquidated damages of **£1,000 GBP per distinct defamatory post**.")
     st.markdown("### 7. CLASS ACTION WAIVER")
     st.markdown("Proceedings will be conducted solely on an individual basis. The user waives the right to participate as a plaintiff or class member in any class action worldwide.")
-    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Freelancer Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
+    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Freelancer Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Liak Studio)</center>", unsafe_allow_html=True)
