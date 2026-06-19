@@ -14,6 +14,7 @@ if "termeni_acceptati" not in st.session_state:
 if "rezultat_analiza" not in st.session_state:
     st.session_state["rezultat_analiza"] = None
 
+# Dicționarul de traduceri
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
@@ -37,7 +38,7 @@ t = {
         "succes": "Analiză finalizată cu succes!",
         "rap_t": "## 🔍 Raport de Audit Contractual",
         "b_down": "Descarcă Raportul (.txt)",
-        "prompt": "Ești un expert juridic în audit contractual. Analizează contractul în ROMÂNĂ: Nume Risc, Clauză originală, Traducere, De ce e periculoasă, Sugestie renegociere.",
+        "prompt": "Ești un algoritm automat de scanare textuală și un asistent digital de tip scut contractual pentru business. NU ești avocat și NU oferi consultanță juridică. Analizează textul primit și identifică riscurile comerciale evidente. Structurează rezultatul în ROMÂNĂ: 1. Nume Risc Comercial, 2. Clauză originală, 3. Traducere pe înțelesul tuturor, 4. De ce poate fi o capcană de business, 5. Idee orientativă de renegociere.",
         "subsol": "🛡️ Asistent Contracte | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)"
     },
     "EN": {
@@ -62,7 +63,7 @@ t = {
         "succes": "Analysis completed successfully!",
         "rap_t": "## 🔍 Contractual Audit Report",
         "b_down": "Download Report (.txt)",
-        "prompt": "You are a legal expert in contract auditing. Analyze the contract and identify risks in ENGLISH: Risk Name, Original Clause, Translation, Why it is dangerous, Renegotiation suggestion.",
+        "prompt": "You are an automated text scanning algorithm and a digital contract shield assistant for business. You are NOT a lawyer and you DO NOT provide legal advice. Analyze the text and identify obvious commercial risks. Structure the report in ENGLISH: 1. Commercial Risk Name, 2. Original Clause, 3. Plain English Translation, 4. Why it can be a business trap, 5. Tentative renegotiation suggestion.",
         "subsol": "🛡️ Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Pantick)"
     }
 }
@@ -73,6 +74,7 @@ st.markdown("<style>.feature-card { background-color: #f8fafc; padding: 20px; bo
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
+# Containerul ascuns care încarcă popup-ul Cookie-Script în fundal
 html_ad_config = f"""
 <div style="display:none;">
     <script type="text/javascript" charset="UTF-8" src="https://cookie-script.com"></script>
@@ -82,6 +84,9 @@ components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
 
+# =====================================================================
+# 📊 APELARE BANNER 1 (SIDEBAR)
+# =====================================================================
 st.sidebar.markdown("---")
 st.sidebar.caption("Advertisement")
 try:
@@ -89,7 +94,9 @@ try:
     components.html(html_sidebar_ad, height=270)
 except Exception:
     pass
-
+# =====================================================================
+# 🔒 SISTEMUL DE BIFARE CONTRACTUAL
+# =====================================================================
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
 st.session_state.termeni_acceptati = accepta_termeni
 
@@ -125,7 +132,6 @@ if "rezultat_analiza" not in st.session_state:
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
-
 contract_final_text = ""
 if uploaded_file is not None:
     nm_f = uploaded_file.name.lower()
@@ -154,18 +160,30 @@ if st.button(L["b_start"], type="primary"):
     else:
         with st.spinner(L["spinner"]):
             try:
-                # Noul mod stabil de inițializare Google care suportă cheile native AQ.
                 client = genai.Client(api_key=cheie_finala)
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
                     contents=f"{L['prompt']}\n\n{contract_final_text}"
                 )
-                st.session_state["rezultat_analiza"] = response.text
+                
+                # 🛡️ AGREGARE DISCLAIMER LEGAL OBLIGATORIU LA ÎNCEPUTUL RAPORTULUI
+                text_disclaimer_protectie = (
+                    "⚠️ **NOTĂ IMPORTANTĂ DE SIGURANȚĂ JURIDICĂ:**\n"
+                    "Acest raport este generat în mod automat de un algoritm bazat pe inteligență artificială și are un scop pur educativ, informativ și de orientare comercială generală. "
+                    "Prezentele puncte reprezintă o opinie algoritmică strict orientativă și NU constituie consultanță juridică autorizată. Această platformă nu înlocuiește sub nicio formă un specialist în drept.\n\n"
+                    "**Pentru decizii contractuale oficiale, sfaturi de specialitate și o expertiză legală autorizată, vă rugăm și vă recomandăm insistent să consultați o casă de avocatură autorizată sau un cabinet de avocatură înscris în Barou.**\n"
+                    "--- \n\n"
+                )
+                
+                st.session_state["rezultat_analiza"] = text_disclaimer_protectie + response.text
                 st.success(L["succes"])
                 st.rerun()
             except Exception as e:
                 st.error(f"Eroare AI: {str(e)}")
 
+# =====================================================================
+# REZULTATE ȘI BANNER INTERN (MĂRIT PENTRU LOC POPUP)
+# =====================================================================
 if "rezultat_analiza" in st.session_state and st.session_state["rezultat_analiza"]:
     st.markdown(L["rap_t"])
     st.markdown(st.session_state["rezultat_analiza"])
