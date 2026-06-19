@@ -241,12 +241,21 @@ if st.button(L["b_start"], type="primary"):
         
         with st.spinner(L["coada_msg"] if este_blocat else L["spinner"]):
             with coada_globala:
-                try:
+                                try:
+                    import time
                     client = genai.Client(api_key=cheie_finala)
-                    response = client.models.generate_content(
-                        model="gemini-1.5-flash",
-                        contents=f"{L['prompt']}\n\n{contract_final_text}"
-                    )
+                    for incercare in range(3):
+                        try:
+                            response = client.models.generate_content(
+                                model="gemini-2.5-flash",
+                                contents=f"{L['prompt']}\n\n{contract_final_text}"
+                            )
+                            break
+                        except Exception as e:
+                            if "503" in str(e) and incercare < 2:
+                                time.sleep(1)
+                                continue
+                            raise e
                     
                     if st.session_state["limba"] == "RO":
                         text_disclaimer_protectie = (
