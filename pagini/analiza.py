@@ -161,7 +161,11 @@ if st.button(L["b_start"], type="primary"):
                 genai.configure()
                 
                 prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
-                model = genai.GenerativeModel("models/gemini-1.5-flash")
+                # Forțează utilizarea serverului stabil v1 de producție, eliminând eroarea 401 a cheilor noi
+model = genai.GenerativeModel(
+    model_name="models/gemini-1.5-flash",
+    generation_config={"api_version": "v1"}
+)
                 response = model.generate_content(prompt_complet)
                 
                 st.session_state["rezultat_analiza"] = response.text
