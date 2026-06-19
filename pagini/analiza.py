@@ -5,6 +5,13 @@ import docx
 import pypdf
 import openpyxl
 import ads_config
+import threading
+import time
+
+# Inițializare Lock Global pentru lista de așteptare (primul venit, primul servit)
+if "sistem_coada_lock" not in st.clear_caches.__globals__:
+    st.clear_caches.__globals__["sistem_coada_lock"] = threading.Lock()
+coada_globala = st.clear_caches.__globals__["sistem_coada_lock"]
 
 if "limba" not in st.session_state:
     st.session_state["limba"] = "EN"
@@ -15,7 +22,6 @@ if "termeni_acceptati" not in st.session_state:
 if "rezultat_analiza" not in st.session_state:
     st.session_state["rezultat_analiza"] = None
 
-# Dicționarul de traduceri
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
@@ -36,6 +42,7 @@ t = {
         "e_text": "Te rugăm să introduci text sau să încarci un document.",
         "e_config": "❌ Eroare: Trebuie să introduceți o cheie Gemini API validă în bara laterală pentru a putea pornii analiza.",
         "spinner": "AI-ul scanează textul pentru riscuri contractuale...",
+        "coada_msg": "⏳ Serverul procesează un alt document în acest moment. Sunteți în lista de așteptare, analiza dvs. va începe automat imediat...",
         "succes": "Analiză finalizată cu succes!",
         "rap_t": "## 🔍 Raport de Audit Contractual",
         "b_down": "Descarcă Raportul (.txt)",
@@ -62,6 +69,7 @@ t = {
         "e_text": "Please enter text or upload a document.",
         "e_config": "❌ Error: You must enter a valid Gemini API Key in the sidebar to run the analysis.",
         "spinner": "AI is scanning text for contractual risks...",
+        "coada_msg": "⏳ The server is currently processing another document. You are in the waiting queue, your analysis will start automatically in a moment...",
         "succes": "Analysis completed successfully!",
         "rap_t": "## 🔍 Contractual Audit Report",
         "b_down": "Download Report (.txt)",
@@ -86,9 +94,6 @@ components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
 
-# =====================================================================
-# 📊 APELARE BANNER 1 (SIDEBAR)
-# =====================================================================
 st.sidebar.markdown("---")
 st.sidebar.caption("Advertisement")
 try:
@@ -109,14 +114,6 @@ if st.button(L["b_ghid"]):
             2. **Introdu cheia ta:** Mergi în bara laterală stângă și introdu cheia ta secretă **Gemini API Key**.
             3. **Incarcă documentul:** Încarcă un fișier **PDF, Word (.docx) sau Excel (.xlsx)**, ori dă copy-paste la text manual.
             4. **Analizează:** Apasă butonul albastru pentru a genera instant scutul tău contractual de business.
-            
-            ### 🔑 Cum obții propria cheie Gemini API Key (100% Gratuit):
-            1. Intră pe site-ul oficial: [Google AI Studio](https://google.com).
-            2. Conectează-te cu contul tău de **Gmail**.
-            3. Apasă pe butonul albastru **"Get API key"** din colțul din stânga sus.
-            4. Apasă pe **"Create API key"** și selectează proiectul tău.
-            5. Copiază cheia lungă afișată pe ecran (va începe cu literele `AIzaSy` sau `AQ.`).
-            6. Pune cheia copiată în bara laterală a acestui site. Datele tale sunt sigure!
             """)
         else:
             st.markdown("""
@@ -125,14 +122,6 @@ if st.button(L["b_ghid"]):
             2. **Enter your key:** Go to the left sidebar and enter your secret **Gemini API Key**.
             3. **Upload document:** Upload a **PDF, Word (.docx), or Excel (.xlsx)** file, or paste text manually.
             4. **Analyze:** Click the blue button to instantly generate your business contract shield.
-            
-            ### 🔑 How to get your own Gemini API Key (100% Free):
-            1. Go to the official website: [Google AI Studio](https://google.com).
-            2. Log in with your regular **Gmail** account.
-            3. Click the blue **"Get API key"** button in the top left corner.
-            4. Click **"Create API key"** and select your project.
-            5. Copy the long key displayed on the screen (starts with `AIzaSy` or `AQ.`).
-            6. Paste the copied key into the sidebar of this website. Your data is safe!
             """)
     afiseaza_ghid_modal()
 
@@ -207,36 +196,41 @@ if st.button(L["b_start"], type="primary"):
     elif not contract_final_text.strip():
         st.error(L["e_text"])
     else:
-        with st.spinner(L["spinner"]):
-            try:
-                client = genai.Client(api_key=cheie_finala)
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=f"{L['prompt']}\n\n{contract_final_text}"
-                )
-                
-                if st.session_state["limba"] == "RO":
-                    text_disclaimer_protectie = (
-                        "⚠️ **NOTĂ IMPORTANTĂ DE SIGURANȚĂ JURIDICĂ:**\n"
-                        "Acest raport este generat în mod automat de un algoritm bazat pe inteligență artificială și are un scop pur educativ, informativ și de orientare comercială generală. "
-                        "Prezentele puncte reprezintă o opinie algoritmică strict orientativă și NU constituie consultanță juridică autorizată. Această platformă nu înlocuiește sub nicio formă un specialist în drept.\n\n"
-                        "**Pentru decizii contractuale oficiale, sfaturi de specialitate și o expertiză legală autorizată, vă rugăm și vă recomandăm insistent să consultați o casă de avocatură autorizată sau un cabinet de avocatură înscris în Barou.**\n"
-                        "--- \n\n"
+        # 🛡️ VERIFICARE COADĂ GLOBALĂ - PRIMUL VENIT, PRIMUL SERVIT
+        este_blocat = coada_globala.locked()
+        
+        with st.spinner(L["coada_msg"] if este_blocat else L["spinner"]):
+            # Firul de execuție curent așteaptă rândul lui la coadă
+            with coada_globala:
+                try:
+                    client = genai.Client(api_key=cheie_finala)
+                    response = client.models.generate_content(
+                        model="gemini-2.5-flash",
+                        contents=f"{L['prompt']}\n\n{contract_final_text}"
                     )
-                else:
-                    text_disclaimer_protectie = (
-                        "⚠️ **IMPORTANT LEGAL DISCLAIMER:**\n"
-                        "This report is automatically generated by an AI algorithm and is intended strictly for educational, informational, and general business guidance purposes. "
-                        "These points represent a strictly indicative algorithmic opinion and DO NOT constitute authorized legal advice. This platform does not replace a legal professional.\n\n"
-                        "**For official contractual decisions, professional advice, and authorized legal expertise, please and strongly we advise you to consult an authorized law firm or a licensed attorney.**\n"
-                        "--- \n\n"
-                    )
-                
-                st.session_state["rezultat_analiza"] = text_disclaimer_protectie + response.text
-                st.success(L["succes"])
-                st.rerun()
-            except Exception as e:
-                st.error(f"Eroare AI: {str(e)}")
+                    
+                    if st.session_state["limba"] == "RO":
+                        text_disclaimer_protectie = (
+                            "⚠️ **NOTĂ IMPORTANTĂ DE SIGURANȚĂ JURIDICĂ:**\n"
+                            "Acest raport este generat în mod automat de un algoritm bazat pe inteligență artificială și are un scop pur educativ, informativ și de orientare comercială generală. "
+                            "Prezentele puncte reprezintă o opinie algoritmică strict orientativă și NU constituie consultanță juridică autorizată. Această platformă nu înlocuiește sub nicio formă un specialist în drept.\n\n"
+                            "**Pentru decizii contractuale oficiale, sfaturi de specialitate și o expertiză legală autorizată, vă rugăm și vă recomandăm insistent să consultați o casă de avocatură autorizată sau un cabinet de avocatură înscris în Barou.**\n"
+                            "--- \n\n"
+                        )
+                    else:
+                        text_disclaimer_protectie = (
+                            "⚠️ **IMPORTANT LEGAL DISCLAIMER:**\n"
+                            "This report is automatically generated by an AI algorithm and is intended strictly for educational, informational, and general business guidance purposes. "
+                            "These points represent a strictly indicative algorithmic opinion and DO NOT constitute authorized legal advice. This platform does not replace a legal professional.\n\n"
+                            "**For official contractual decisions, professional advice, and authorized legal expertise, please and strongly we advise you to consult an authorized law firm or a licensed attorney.**\n"
+                            "--- \n\n"
+                        )
+                    
+                    st.session_state["rezultat_analiza"] = text_disclaimer_protectie + response.text
+                    st.success(L["succes"])
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Eroare AI: {str(e)}")
 
 if "rezultat_analiza" in st.session_state and st.session_state["rezultat_analiza"]:
     st.markdown(L["rap_t"])
