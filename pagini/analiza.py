@@ -11,9 +11,6 @@ if "limba" not in st.session_state:
 if "termeni_acceptati" not in st.session_state:
     st.session_state.termeni_acceptati = False
 
-if "numar_utilizari" not in st.session_state:
-    st.session_state["numar_utilizari"] = 0
-
 if "rezultat_analiza" not in st.session_state:
     st.session_state["rezultat_analiza"] = None
 
@@ -25,19 +22,18 @@ t = {
         "avertisment_b2b": "⚠️ **Disclaimer Legal:** Această platformă este un instrument experimental bazat pe AI, destinat informării generale și educației contractuale.",
         "bifa_text": "Am citit, înțeleg și accept în mod exprimat Termenii de Utilizare și Politica de Confidențialitate (GDPR).",
         "blocat_text": "🔒 Pentru a accesa funcțiile de upload și analiza AI, trebuie mai întâi să bifați căsuța de acceptare a Termenilor de mai sus.",
-        "ghid": "💡 **How to use this tool:** Acest site funcționează ca un copilot informativ. Rezultatele generate sunt strict orientative.",
+        "ghid": "💡 **Cum folosim acest instrument:** Acest site funcționează ca un copilot informativ. Rezultatele generate sunt strict orientative.",
         "c1": "<b>💡 Ghid de Îndrumare</b><br>Traduce clauzele contractuale complicate în cuvinte simple.",
         "c2": "<b>🚩 Alertă Clauze Ascunse</b><br>Semnalează penalitățile disproporționate sau termenele abuzive.",
         "c3": "<b>🗣️ Idei de Renegociere</b><br>Îți oferă argumente și formulări politicoase.",
-        "side_s": "Cheie personală activă.",
-        "side_d": "Modul DEMO activ",
+        "side_s": "🚀 Cheie personală activată cu succes!",
+        "side_d": "🔑 Introduceți cheia dvs. Gemini API Key în căsuța de mai jos pentru a debloca analiza.",
         "up_t": "Încarcă documentul (PDF, DOCX, TXT):",
         "tx_t": "Sau introdu textul clauzelor suspecte manual:",
         "disc": "🔒 Securitate & Siguranță: Conținutul documentelor este procesat volatil. Analiză informativă.",
         "b_start": "Pornește Analiza Inteligentă",
-        "e_limita": "⚠️ Limita demo a fost atinsă!",
         "e_text": "Te rugăm să introduci text sau să încarci un document.",
-        "e_config": "Sistemul Demo nu este configurat!",
+        "e_config": "❌ Eroare: Trebuie să introduceți o cheie Gemini API validă în bara laterală pentru a putea porni analiza.",
         "spinner": "AI-ul scanează textul pentru riscuri contractuale...",
         "succes": "Analiză finalizată cu succes!",
         "rap_t": "## 🔍 Raport de Audit Contractual",
@@ -55,15 +51,14 @@ t = {
         "c1": "<b>💡 Guidance Guide</b><br>Translates complicated contractual clauses into simple terms.",
         "c2": "<b>🚩 Hidden Clauses Alert</b><br>Flags disproportionate penalties or unfair terms.",
         "c3": "<b>🗣️ Negotiation Ideas</b><br>Provides you with polite arguments and wordings.",
-        "side_s": "Personal key active.",
-        "side_d": "DEMO mode active",
+        "side_s": "🚀 Personal key activated successfully!",
+        "side_d": "🔑 Please enter your Gemini API Key in the box below to unlock the analysis.",
         "up_t": "Upload document (PDF, DOCX, TXT):",
         "tx_t": "Or enter text manually:",
         "disc": "🔒 Security & Safety: Document processed dynamically and not stored. Educational purposes only.",
         "b_start": "Start Intelligent Analysis",
-        "e_limita": "⚠️ Demo limit reached!",
         "e_text": "Please enter text or upload a document.",
-        "e_config": "Demo System is not configured!",
+        "e_config": "❌ Error: You must enter a valid Gemini API Key in the sidebar to run the analysis.",
         "spinner": "AI is scanning text for contractual risks...",
         "succes": "Analysis completed successfully!",
         "rap_t": "## 🔍 Contractual Audit Report",
@@ -79,7 +74,6 @@ st.markdown("<style>.feature-card { background-color: #f8fafc; padding: 20px; bo
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
-# Containerul ascuns pentru popup-ul Cookie-Script
 html_ad_config = f"""
 <div style="display:none;">
     <script type="text/javascript" charset="UTF-8" src="https://cookie-script.com"></script>
@@ -89,9 +83,6 @@ components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
 
-# =====================================================================
-# 📊 APELARE BANNER 1 (SIDEBAR)
-# =====================================================================
 st.sidebar.markdown("---")
 st.sidebar.caption("Advertisement")
 try:
@@ -99,9 +90,7 @@ try:
     components.html(html_sidebar_ad, height=270)
 except Exception:
     pass
-# =====================================================================
-# 🔒 SISTEMUL DE BIFARE CONTRACTUAL
-# =====================================================================
+
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
 st.session_state.termeni_acceptati = accepta_termeni
 
@@ -117,32 +106,16 @@ if not st.session_state.termeni_acceptati:
     st.stop()
 
 # =====================================================================
-# INTERFATA DE INPUT (REPARATĂ DINAMIC)
+# INTERFATA DE INPUT - EXCLUSIV PE CHEIA UTILIZATORULUI
 # =====================================================================
-api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_intrare")
-foloseste_mod_demo = True
+api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_curata")
 cheie_finala = None
 
 if api_cheie_utilizator.strip():
     cheie_finala = api_cheie_utilizator.strip()
-    foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    # Aici pui noua ta cheie AQ pe care ai generat-o din AI Studio pentru utilizatorii demo
-    cheie_finala = "AQ.Ab8RN6KTiQ9nJvd9vAJf5JHeyq2qSs6vMdhPYJ1u8eC-WQHGtg"
-    st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
-
-if cheie_finala:
-    try:
-        # Curăță orice configurare anterioară și aplică cheia curentă din sesiune
-        import os
-        os.environ["GEMINI_API_KEY"] = cheie_finala
-        genai.configure()
-        client = genai
-    except Exception:
-        client = None
-else:
-    client = None
+    st.sidebar.info(L["side_d"])
 
 if "rezultat_analiza" not in st.session_state:
     st.info(L["ghid"])
@@ -175,30 +148,28 @@ st.caption(L["disc"])
 st.markdown("---")
 
 if st.button(L["b_start"], type="primary"):
-    if foloseste_mod_demo and st.session_state["numar_utilizari"] >= 2:
-        st.error(L["e_limita"])
+    if not cheie_finala:
+        st.error(L["e_config"])
     elif not contract_final_text.strip():
         st.error(L["e_text"])
-    elif client is None:
-        st.error(L["e_config"])
     else:
         with st.spinner(L["spinner"]):
             try:
+                # Configurează cheia utilizatorului direct în sistemul de operare înainte de apel
+                import os
+                os.environ["GEMINI_API_KEY"] = cheie_finala
+                genai.configure()
+                
                 prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
                 model = genai.GenerativeModel("models/gemini-1.5-flash")
                 response = model.generate_content(prompt_complet)
                 
                 st.session_state["rezultat_analiza"] = response.text
-                if foloseste_mod_demo:
-                    st.session_state["numar_utilizari"] += 1
                 st.success(L["succes"])
                 st.rerun()
             except Exception as e:
                 st.error(f"Eroare AI: {str(e)}")
 
-# =====================================================================
-# REZULTATE ȘI BANNER INTERN 
-# =====================================================================
 if "rezultat_analiza" in st.session_state and st.session_state["rezultat_analiza"]:
     st.markdown(L["rap_t"])
     st.markdown(st.session_state["rezultat_analiza"])
