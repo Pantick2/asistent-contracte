@@ -11,7 +11,7 @@ if "X-Recompute-For" in st.context.headers or "ads.txt" in st.query_params:
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
-SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_PANTICK_ASIST_SCUT_2026"
+SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_Liak_Studio_ASIST_SCUT_2026"
 try:
     with open(__file__, "r", encoding="utf-8") as f:
         if "IULIAN_ICHIM_UNGUREANU" not in f.read():
