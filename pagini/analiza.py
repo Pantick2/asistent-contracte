@@ -152,6 +152,90 @@ if api_cheie_utilizator.strip():
     cheie_finala = api_cheie_utilizator.strip()
     st.sidebar.success(L["side_s"])
 else:
+# =====================================================================
+# 🪟 POPUP MODAL CU INSTRUCȚIUNI DETALIATE ȘI GHID CHEIE API
+# =====================================================================
+if st.button(L["b_ghid"]):
+    @st.dialog("User Guide & API Key Setup / Ghid de Utilizare", width="large")
+    def afiseaza_ghid_modal():
+        if st.session_state["limba"] == "RO":
+            st.markdown("""
+            ### 🛠️ Cum funcționează și cum se folosește aplicația:
+            1. **Acceptarea Termenilor (Obligatoriu):** Bifează căsuța de confirmare GDPR de pe ecran. Aceasta deblochează formularele. Aplicația procesează datele volatil (în memorie), fără a stoca permanent documentele tale.
+            2. **Introducerea Cheii API:** Mergi în bara laterală din stânga (Sidebar) și introdu cheia ta personală **Gemini API Key**. Aceasta asigură resursele de calcul dedicate pentru analiza ta.
+            3. **Încărcarea Contractului:** Poți proceda în două moduri:
+               * **Prin Document:** Încarcă un fișier în format **PDF, Word (.docx), Excel (.xlsx) sau Text (.txt)** utilizând zona de upload.
+               * **Manual:** Dă copy-paste direct la paragrafele, clauzele sau textul suspect în căsuța mare de text.
+            4. **Generarea Scutului:** Apasă pe butonul albastru **"Pornește Analiza Inteligentă"**. Algoritmul va rula documentul prin sistemul de coadă și va genera raportul în câteva secunde.
+            
+            ---
+            
+            ### 🔑 Ghid Pas cu Pas pentru Obținerea Cheii Gemini (100% Gratuit):
+            Pentru a rula analize nelimitate pe contul tău, ai nevoie de o cheie gratuită de la Google. Urmează acești pași simpli de pe telefon sau PC:
+            
+            1. **Accesează Platforma:** Intră pe site-ul oficial Google pentru dezvoltatori: [Google AI Studio](https://google.com).
+            2. **Autentificare Securizată:** Conectează-te folosind contul tău obișnuit și personal de **Gmail / Google**.
+            3. **Generarea Cheii:** 
+               * În colțul din stânga sus, apasă pe butonul albastru mare pe care scrie **"Get API key"**.
+               * În pagina următoare, apasă pe butonul **"Create API key"**.
+               * Selectează proiectul tău (creat automat în mod gratuit de Google).
+            4. **Copierea Codului:** Pe ecran va apărea o fereastră cu un cod lung (textul va începe cu literele `AIzaSy` sau formatul modern `AQ.`). Apasă pe butonul **"Copy"** pentru a-l salva în memoria dispozitivului tău.
+            5. **Activarea Aplicației:** Întoarce-te pe acest site, inserează codul copiat în căsuța din stânga și ești gata! 
+            
+            ⚠️ *Notă de Siguranță:* Cheia ta este trimisă direct către serverele securizate ale Google prin conexiune criptată. Platforma noastră nu îți stochează, nu îți vede și nu îți salvează cheia sau conținutul contractelor.
+            """)
+        else:
+            st.markdown("""
+            ### 🛠️ How it works and how to use the application:
+            1. **Accept Terms (Mandatory):** Check the GDPR confirmation box on the screen. This unlocks the interface. The application processes data dynamically in memory without storing your files permanently.
+            2. **Enter your API Key:** Go to the left sidebar and paste your personal **Gemini API Key**. This provides the necessary computing power for your dedicated audit.
+            3. **Upload the Contract:** You can choose between two methods:
+               * **Via Document:** Upload a file in **PDF, Word (.docx), Excel (.xlsx), or Text (.txt)** format using the drag-and-drop area.
+               * **Manually:** Copy and paste the specific paragraphs or suspicious clauses directly into the text area.
+            4. **Run the Shield:** Click the blue button **"Start Intelligent Analysis"**. The algorithm will put the document in the processing queue and generate your report in a few seconds.
+            
+            ---
+            
+            ### 🔑 Step-by-Step Guide to Get a Gemini API Key (100% Free):
+            To run unlimited contractual scans on your own account, you need a free key from Google. Follow these simple steps from your phone or PC:
+            
+            1. **Access the Platform:** Go to the official Google developer portal: [Google AI Studio](https://google.com).
+            2. **Secure Login:** Sign in using your regular, personal **Gmail / Google** account.
+            3. **Generate the Key:**
+               * In the top-left corner, click the large blue button labeled **"Get API key"**.
+               * On the next screen, click the **"Create API key"** button.
+               * Select your project (automatically generated for free by Google).
+            4. **Copy the Code:** A popup will display a long text string (starting with `AIzaSy` or the modern `AQ.`). Click the **"Copy"** button to save it to your clipboard.
+            5. **Activate the Site:** Return to this website, paste the copied code into the sidebar input field, and you are ready!
+            
+            ⚠️ *Security Note:* Your key is transmitted directly to Google's secure servers via an encrypted connection. Our platform does not store, see, or save your API key or your contract's content.
+            """)
+    afiseaza_ghid_modal()
+
+# =====================================================================
+# 🔒 SISTEMUL DE BIFARE CONTRACTUAL
+# =====================================================================
+accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
+st.session_state.termeni_acceptati = accepta_termeni
+
+if not st.session_state.termeni_acceptati:
+    st.warning(L["blocat_text"])
+    if "rezultat_analiza" not in st.session_state:
+        st.info(L["ghid"])
+        col1, col2, col3 = st.columns(3)
+        with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
+        with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
+        with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
+    st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
+    st.stop()
+
+api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_curata")
+cheie_finala = None
+
+if api_cheie_utilizator.strip():
+    cheie_finala = api_cheie_utilizator.strip()
+    st.sidebar.success(L["side_s"])
+else:
     st.sidebar.info(L["side_d"])
 
 if "rezultat_analiza" not in st.session_state:
@@ -163,28 +247,7 @@ if "rezultat_analiza" not in st.session_state:
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "xlsx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
-contract_final_text = ""
-if uploaded_file is not None:
-    nm_f = uploaded_file.name.lower()
-    if ".pdf" in nm_f:
-        try: contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
-        except Exception: pass
-    elif ".docx" in nm_f:
-        try: contract_final_text = "\n".join([pr.text for pr in docx.Document(uploaded_file).paragraphs])
-        except Exception: pass
-    elif ".xlsx" in nm_f:
-        try:
-            wb = openpyxl.load_workbook(uploaded_file, data_only=True)
-            linii_excel = []
-            for sheet in wb.worksheets:
-                for row in sheet.iter_rows(values_only=True):
-                    rand_text = " | ".join([str(cell) for cell in row if cell is not None])
-                    if rand_text.strip(): linii_excel.append(rand_text)
-            contract_final_text = "\n".join(linii_excel)
-        except Exception: pass
-    elif ".txt" in nm_f:
-        try: contract_final_text = uploaded_file.read().decode("utf-8")
-        except Exception: pass
+
 
 if text_manual.strip(): 
     contract_final_text = text_manual
