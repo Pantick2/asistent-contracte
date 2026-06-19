@@ -5,16 +5,6 @@ import docx
 import pypdf
 import openpyxl
 import ads_config
-import threading
-import time
-
-# Sistem de coadă sigur prin stocare cache nativă
-@st.cache_resource
-def obtine_coada_globala():
-    import threading
-    return threading.Lock()
-
-coada_globala = obtine_coada_globala()
 
 if "limba" not in st.session_state:
     st.session_state["limba"] = "EN"
@@ -25,6 +15,7 @@ if "termeni_acceptati" not in st.session_state:
 if "rezultat_analiza" not in st.session_state:
     st.session_state["rezultat_analiza"] = None
 
+# Dicționarul de traduceri
 t = {
     "RO": {
         "titlu": "📄 Asistent de Negociere Contractuală",
@@ -40,7 +31,7 @@ t = {
         "side_d": "🔑 Introduceți cheia dvs. Gemini API Key în căsuța de mai jos pentru a debloca analiza.",
         "up_t": "Încarcă documentul (PDF, DOCX, XLSX, TXT):",
         "tx_t": "Sau introdu textul clauzelor suspecte manual:",
-        "disc": "🔒 Securitate & Siguranță: Conținutul documentelor este procesat volatil. Analiză informativă.",
+        "disc": "🔒 Securitate & Siguranta: Conținutul documentelor este procesat volatil. Analiză informativă.",
         "b_start": "Pornește Analiza Inteligentă",
         "e_text": "Te rugăm să introduci text sau să încarci un document.",
         "e_config": "❌ Eroare: Trebuie să introduceți o cheie Gemini API validă în bara laterală pentru a putea pornii analiza.",
@@ -97,6 +88,9 @@ components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
 
+# =====================================================================
+# 📊 APELARE BANNER 1 (SIDEBAR)
+# =====================================================================
 st.sidebar.markdown("---")
 st.sidebar.caption("Advertisement")
 try:
@@ -104,54 +98,6 @@ try:
     components.html(html_sidebar_ad, height=270)
 except Exception:
     pass
-# =====================================================================
-# 🪟 POPUP MODAL CU INSTRUCȚIUNI ȘI CHEIE API
-# =====================================================================
-if st.button(L["b_ghid"]):
-    @st.dialog("User Guide / Ghid de Utilizare", width="large")
-    def afiseaza_ghid_modal():
-        if st.session_state["limba"] == "RO":
-            st.markdown("""
-            ### 🛠️ Cum se folosește aplicația:
-            1. **Acceptă Termenii:** Bifează căsuța obligatorie de GDPR de pe ecran.
-            2. **Introdu cheia ta:** Mergi în bara laterală stângă și introdu cheia ta secretă **Gemini API Key**.
-            3. **Incarcă documentul:** Încarcă un fișier **PDF, Word (.docx) sau Excel (.xlsx)**, ori dă copy-paste la text manual.
-            4. **Analizează:** Apasă butonul albastru pentru a genera instant scutul tău contractual de business.
-            """)
-        else:
-            st.markdown("""
-            ### 🛠️ How to use the application:
-            1. **Accept Terms:** Check the mandatory GDPR box on the screen.
-            2. **Enter your key:** Go to the left sidebar and enter your secret **Gemini API Key**.
-            3. **Upload document:** Upload a **PDF, Word (.docx), or Excel (.xlsx)** file, or paste text manually.
-            4. **Analyze:** Click the blue button to instantly generate your business contract shield.
-            """)
-    afiseaza_ghid_modal()
-
-# =====================================================================
-# 🔒 SISTEMUL DE BIFARE CONTRACTUAL
-# =====================================================================
-accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
-st.session_state.termeni_acceptati = accepta_termeni
-
-if not st.session_state.termeni_acceptati:
-    st.warning(L["blocat_text"])
-    if "rezultat_analiza" not in st.session_state:
-        st.info(L["ghid"])
-        col1, col2, col3 = st.columns(3)
-        with col1: st.markdown(f"<div class='feature-card'>{L['c1']}</div>", unsafe_allow_html=True)
-        with col2: st.markdown(f"<div class='feature-card'>{L['c2']}</div>", unsafe_allow_html=True)
-        with col3: st.markdown(f"<div class='feature-card'>{L['c3']}</div>", unsafe_allow_html=True)
-    st.markdown(f"<br><hr><center style='color:#94a3b8; font-size:12px;'>{L['subsol']}</center>", unsafe_allow_html=True)
-    st.stop()
-
-api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_curata")
-cheie_finala = None
-
-if api_cheie_utilizator.strip():
-    cheie_finala = api_cheie_utilizator.strip()
-    st.sidebar.success(L["side_s"])
-else:
 # =====================================================================
 # 🪟 POPUP MODAL CU INSTRUCȚIUNI DETALIATE ȘI GHID CHEIE API
 # =====================================================================
@@ -247,7 +193,36 @@ if "rezultat_analiza" not in st.session_state:
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "xlsx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
+# Sistem de coadă sigur prin stocare cache nativă Streamlit
+@st.cache_resource
+def obtine_coada_globala():
+    import threading
+    return threading.Lock()
 
+coada_globala = obtine_coada_globala()
+
+contract_final_text = ""
+if uploaded_file is not None:
+    nm_f = uploaded_file.name.lower()
+    if ".pdf" in nm_f:
+        try: contract_final_text = "".join([p.extract_text() for p in pypdf.PdfReader(uploaded_file).pages])
+        except Exception: pass
+    elif ".docx" in nm_f:
+        try: contract_final_text = "\n".join([pr.text for pr in docx.Document(uploaded_file).paragraphs])
+        except Exception: pass
+    elif ".xlsx" in nm_f:
+        try:
+            wb = openpyxl.load_workbook(uploaded_file, data_only=True)
+            linii_excel = []
+            for sheet in wb.worksheets:
+                for row in sheet.iter_rows(values_only=True):
+                    rand_text = " | ".join([str(cell) for cell in row if cell is not None])
+                    if rand_text.strip(): linii_excel.append(rand_text)
+            contract_final_text = "\n".join(linii_excel)
+        except Exception: pass
+    elif ".txt" in nm_f:
+        try: contract_final_text = uploaded_file.read().decode("utf-8")
+        except Exception: pass
 
 if text_manual.strip(): 
     contract_final_text = text_manual
@@ -262,11 +237,9 @@ if st.button(L["b_start"], type="primary"):
     elif not contract_final_text.strip():
         st.error(L["e_text"])
     else:
-        # 🛡️ VERIFICARE COADĂ GLOBALĂ - PRIMUL VENIT, PRIMUL SERVIT
         este_blocat = coada_globala.locked()
         
         with st.spinner(L["coada_msg"] if este_blocat else L["spinner"]):
-            # Firul de execuție curent așteaptă rândul lui la coadă
             with coada_globala:
                 try:
                     client = genai.Client(api_key=cheie_finala)
