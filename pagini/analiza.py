@@ -8,10 +8,13 @@ import ads_config
 import threading
 import time
 
-# Inițializare Lock Global pentru lista de așteptare (primul venit, primul servit)
-if "sistem_coada_lock" not in st.clear_caches.__globals__:
-    st.clear_caches.__globals__["sistem_coada_lock"] = threading.Lock()
-coada_globala = st.clear_caches.__globals__["sistem_coada_lock"]
+# Sistem de coadă sigur prin stocare cache nativă
+@st.cache_resource
+def obtine_coada_globala():
+    import threading
+    return threading.Lock()
+
+coada_globala = obtine_coada_globala()
 
 if "limba" not in st.session_state:
     st.session_state["limba"] = "EN"
