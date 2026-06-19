@@ -74,6 +74,7 @@ st.markdown("<style>.feature-card { background-color: #f8fafc; padding: 20px; bo
 st.title(L["titlu"])
 st.markdown(f"<p style='font-size:18px; color:#475569;'>{L['subtitlu']}</p>", unsafe_allow_html=True)
 
+# Containerul ascuns care încarcă popup-ul Cookie-Script în fundal
 html_ad_config = f"""
 <div style="display:none;">
     <script type="text/javascript" charset="UTF-8" src="https://cookie-script.com"></script>
@@ -83,6 +84,9 @@ components.html(html_ad_config, height=0)
 
 st.info(L["avertisment_b2b"])
 
+# =====================================================================
+# 📊 APELARE BANNER 1 (SIDEBAR)
+# =====================================================================
 st.sidebar.markdown("---")
 st.sidebar.caption("Advertisement")
 try:
@@ -90,7 +94,9 @@ try:
     components.html(html_sidebar_ad, height=270)
 except Exception:
     pass
-
+# =====================================================================
+# 🔒 SISTEMUL DE BIFARE CONTRACTUAL
+# =====================================================================
 accepta_termeni = st.checkbox(L["bifa_text"], value=st.session_state.termeni_acceptati, key="chk_termeni_obligatoriu")
 st.session_state.termeni_acceptati = accepta_termeni
 
@@ -126,7 +132,6 @@ if "rezultat_analiza" not in st.session_state:
 
 uploaded_file = st.file_uploader(L["up_t"], type=["pdf", "docx", "txt"])
 text_manual = st.text_area(L["tx_t"], height=150)
-
 contract_final_text = ""
 if uploaded_file is not None:
     nm_f = uploaded_file.name.lower()
@@ -155,24 +160,15 @@ if st.button(L["b_start"], type="primary"):
     else:
         with st.spinner(L["spinner"]):
             try:
-                        try:
-                # Configurează cheia utilizatorului direct în sistemul de operare înainte de apel
-                import os
-                os.environ["GEMINI_API_KEY"] = cheie_finala
-                
-                # Forțează utilizarea serverului stabil v1 de producție la configurare
-                genai.configure(client_options={"api_version": "v1"})
-                
-                prompt_complet = f"{L['prompt']}\n\n{contract_final_text}"
-                model = genai.GenerativeModel("models/gemini-1.5-flash")
-                response = model.generate_content(prompt_complet)
-                
-                st.session_state["rezultat_analiza"] = response.text
-                st.success(L["succes"])
-                st.rerun()
+                import os; os.environ["GEMINI_API_KEY"] = cheie_finala; genai.configure(client_options={"api_version": "v1"})
+                response = genai.GenerativeModel("models/gemini-1.5-flash").generate_content(f"{L['prompt']}\n\n{contract_final_text}")
+                st.session_state["rezultat_analiza"] = response.text; st.success(L["succes"]); st.rerun()
             except Exception as e:
                 st.error(f"Eroare AI: {str(e)}")
 
+# =====================================================================
+# REZULTATE ȘI BANNER INTERN (MĂRIT PENTRU LOC POPUP)
+# =====================================================================
 if "rezultat_analiza" in st.session_state and st.session_state["rezultat_analiza"]:
     st.markdown(L["rap_t"])
     st.markdown(st.session_state["rezultat_analiza"])
