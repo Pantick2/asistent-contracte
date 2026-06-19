@@ -119,7 +119,7 @@ if st.button(L["b_ghid"]):
             ### 🔑 Ghid Pas cu Pas pentru Obținerea Cheii Gemini (100% Gratuit):
             Pentru a rula analize nelimitate pe contul tău, ai nevoie de o cheie gratuită de la Google. Urmează acești pași simpli de pe telefon sau PC:
             
-            1. **Accesează Platforma:** Intră pe site-ul oficial Google pentru dezvoltatori: [Google AI Studio](https://google.com).
+            1. **Accesează Platforma:** Intră pe site-ul oficial Google pentru dezvoltatori: [Google AI Studio](https://ai.google.dev/gemini-api/docs/api-key).
             2. **Autentificare Securizată:** Conectează-te folosind contul tău obișnuit și personal de **Gmail / Google**.
             3. **Generarea Cheii:** 
                * În colțul din stânga sus, apasă pe butonul albastru mare pe care scrie **"Get API key"**.
