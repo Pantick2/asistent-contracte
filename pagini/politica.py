@@ -33,7 +33,7 @@ if st.session_state["limba"] == "RO":
     st.markdown("### 6. LEGEA APLICABILĂ ȘI JURISDICȚIA")
     st.markdown("Orice solicitare sau litigiu legat de prezenții termeni de confidențialitate va fi guvernat de legile din Anglia și Țara Galilor și va fi trimis spre soluționare exclusivă instanțelor competente din Milton Keynes, Regatul Unit.")
     
-    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
+    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Asistent Contracte Freelanceri | Deținut de IULIAN ICHIM-UNGUREANU (Liak Studio)</center>", unsafe_allow_html=True)
 
 else:
     st.title("🔒 Privacy Policy")
@@ -65,4 +65,4 @@ else:
     st.markdown("### 6. GOVERNING LAW AND JURISDICTION")
     st.markdown("Any inquiry or dispute related to these privacy terms shall be governed by the laws of England and Wales and submitted to the exclusive jurisdiction of the competent courts in Milton Keynes, United Kingdom.")
     
-    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Freelancer Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Pantick)</center>", unsafe_allow_html=True)
+    st.markdown("<br><hr><center style='color:#94a3b8; font-size:12px;'>🛡️ Freelancer Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Liak Studio)</center>", unsafe_allow_html=True)
