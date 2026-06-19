@@ -40,7 +40,7 @@ t = {
         "succes": "Analiză finalizată cu succes!",
         "rap_t": "## 🔍 Raport de Audit Contractual",
         "b_down": "Descarcă Raportul (.txt)",
-        "prompt": "Ești un algoritm automat de scanare textuală și un asistent digital de tip scut contractual pentru business. NU ești avocat și NU oferi consultanță juridică. Analizează textul primit și identifică riscurile comerciale evidente. Structurează rezultatul în ROMÂNĂ: 1. Nume Risc Comercial, 2. Clauză originală, 3. Traducere pe înțelesul tuturor, 4. De ce poate fi o capcană de business, 5. Idee orientativă de renegociere.",
+        "prompt": "Ești un algoritm automat de scanare textuală și un asistent digital de tip scut contractual pentru business. NU ești avocat și NU oferi consultanță juridică. Analizează textul primit și identifică riscurile comerciale evidente. ATENȚIE: Folosește un limbaj extrem de simplu, clar și pe înțelesul unui om fără studii sau fără experiență (ca pentru cineva cu 4 clase). Evită cuvintele complicate de avocat și explică capcanele prin exemple băbești. Structurează rezultatul în ROMÂNĂ astfel: 1. Nume Risc Comercial (scris simplu), 2. Clauză originală, 3. Traducere pe înțelesul tuturor (explicat super simplu), 4. De ce este o capcană periculoasă (ce poți păți/cum poți pierde bani), 5. Idee simplă cum să ceri modificarea ei.",
         "subsol": "🛡️ Asistent Contracte | Deținut de IULIAN ICHIM-UNGUREANU (Liak Studio)",
         "b_ghid": "📖 Ghid de Utilizare & Obținere Cheie API"
     },
@@ -67,7 +67,7 @@ t = {
         "succes": "Analysis completed successfully!",
         "rap_t": "## 🔍 Contractual Audit Report",
         "b_down": "Download Report (.txt)",
-        "prompt": "You are an automated text scanning algorithm and a digital contract shield assistant for business. You are NOT a lawyer and you DO NOT provide legal advice. Analyze the text and identify obvious commercial risks. Structure the report in ENGLISH: 1. Commercial Risk Name, 2. Original Clause, 3. Plain English Translation, 4. Why it can be a business trap, 5. Tentative renegotiation suggestion.",
+        "prompt": "You are an automated text scanning algorithm and a digital contract shield assistant for business. You are NOT a lawyer and you DO NOT provide legal advice. Analyze the text and identify obvious commercial risks. ATTENTION: Use an extremely simple, clear language that anyone can understand, avoiding complex legal jargon. Explain the traps using everyday, simple examples. Structure the report in ENGLISH: 1. Commercial Risk Name (plain language), 2. Original Clause, 3. Super Simple Translation (plain terms), 4. Why it is a dangerous trap (how you can lose money/get hurt), 5. Simple idea on how to ask for a change.",
         "subsol": "🛡️ Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Liak Studio)",
         "b_ghid": "📖 User Guide & How to get API Key"
     }
