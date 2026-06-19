@@ -244,7 +244,7 @@ if st.button(L["b_start"], type="primary"):
                 try:
                     client = genai.Client(api_key=cheie_finala)
                     response = client.models.generate_content(
-                        model="gemini-2.5-flash",
+                        model="gemini-1.5-flash",
                         contents=f"{L['prompt']}\n\n{contract_final_text}"
                     )
                     
