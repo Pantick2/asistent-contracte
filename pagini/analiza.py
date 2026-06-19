@@ -39,7 +39,7 @@ t = {
         "rap_t": "## 🔍 Raport de Audit Contractual",
         "b_down": "Descarcă Raportul (.txt)",
         "prompt": "Ești un algoritm automat de scanare textuală și un asistent digital de tip scut contractual pentru business. NU ești avocat și NU oferi consultanță juridică. Analizează textul primit și identifică riscurile comerciale evidente. Structurează rezultatul în ROMÂNĂ: 1. Nume Risc Comercial, 2. Clauză originală, 3. Traducere pe înțelesul tuturor, 4. De ce poate fi o capcană de business, 5. Idee orientativă de renegociere.",
-        "subsol": "🛡️ Asistent Contracte | Deținut de IULIAN ICHIM-UNGUREANU (Pantick)"
+        "subsol": "🛡️ Asistent Contracte | Deținut de IULIAN ICHIM-UNGUREANU (Liak Studio)"
     },
     "EN": {
         "titlu": "📄 Contract Negotiation Assistant",
@@ -64,7 +64,7 @@ t = {
         "rap_t": "## 🔍 Contractual Audit Report",
         "b_down": "Download Report (.txt)",
         "prompt": "You are an automated text scanning algorithm and a digital contract shield assistant for business. You are NOT a lawyer and you DO NOT provide legal advice. Analyze the text and identify obvious commercial risks. Structure the report in ENGLISH: 1. Commercial Risk Name, 2. Original Clause, 3. Plain English Translation, 4. Why it can be a business trap, 5. Tentative renegotiation suggestion.",
-        "subsol": "🛡️ Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Pantick)"
+        "subsol": "🛡️ Contract Assistant | Owned by IULIAN ICHIM-UNGUREANU (Liak Studio)"
     }
 }
 
