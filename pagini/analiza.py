@@ -160,9 +160,12 @@ if st.button(L["b_start"], type="primary"):
     else:
         with st.spinner(L["spinner"]):
             try:
-                import os; os.environ["GEMINI_API_KEY"] = cheie_finala; genai.configure(client_options={"api_version": "v1"})
-                response = genai.GenerativeModel("models/gemini-1.5-flash").generate_content(f"{L['prompt']}\n\n{contract_final_text}")
-                st.session_state["rezultat_analiza"] = response.text; st.success(L["succes"]); st.rerun()
+                genai.configure(api_key=cheie_finala)
+                model = genai.GenerativeModel("gemini-1.5-flash")
+                response = model.generate_content(f"{L['prompt']}\n\n{contract_final_text}")
+                st.session_state["rezultat_analiza"] = response.text
+                st.success(L["succes"])
+                st.rerun()
             except Exception as e:
                 st.error(f"Eroare AI: {str(e)}")
 
