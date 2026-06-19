@@ -128,18 +128,21 @@ if api_cheie_utilizator.strip():
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    # Citește cheia în siguranță din fișierul secrets.toml pe care tocmai l-am creat
-    cheie_finala = st.secrets["GEMINI_API_KEY"]
+    import os
+    cheie_finala = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6KTiQ9nJvd9vAJf5JHeyq2qSs6vMdhPYJ1u8eC-WQHGtg")
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
     try:
         import os
+        # Aceasta linie forțează sistemul să accepte cheia de tip AQ. ocolind bug-ul bibliotecii
         os.environ["GEMINI_API_KEY"] = cheie_finala
         genai.configure()
         client = genai
     except Exception:
         client = None
+else:
+    client = None
 
 else:
     client = None
