@@ -144,9 +144,6 @@ if cheie_finala:
 else:
     client = None
 
-else:
-    client = None
-
 if "rezultat_analiza" not in st.session_state:
     st.info(L["ghid"])
     col1, col2, col3 = st.columns(3)
