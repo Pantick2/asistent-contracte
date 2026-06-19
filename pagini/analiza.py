@@ -117,9 +117,9 @@ if not st.session_state.termeni_acceptati:
     st.stop()
 
 # =====================================================================
-# INTERFATA DE INPUT (APARE DUPĂ BIFA ACTIVĂ)
+# INTERFATA DE INPUT (REPARATĂ DINAMIC)
 # =====================================================================
-api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_originala")
+api_cheie_utilizator = st.sidebar.text_input("Gemini API Key:", type="password", key="cheie_utilizator_intrare")
 foloseste_mod_demo = True
 cheie_finala = None
 
@@ -128,14 +128,14 @@ if api_cheie_utilizator.strip():
     foloseste_mod_demo = False
     st.sidebar.success(L["side_s"])
 else:
-    import os
-    cheie_finala = os.environ.get("GEMINI_API_KEY", "AQ.Ab8RN6KTiQ9nJvd9vAJf5JHeyq2qSs6vMdhPYJ1u8eC-WQHGtg")
+    # Aici pui noua ta cheie AQ pe care ai generat-o din AI Studio pentru utilizatorii demo
+    cheie_finala = "AQ.Ab8RN6KTiQ9nJvd9vAJf5JHeyq2qSs6vMdhPYJ1u8eC-WQHGtg"
     st.sidebar.info(f"{L['side_d']} ({st.session_state['numar_utilizari']}/2 analize).")
 
 if cheie_finala:
     try:
+        # Curăță orice configurare anterioară și aplică cheia curentă din sesiune
         import os
-        # Aceasta linie forțează sistemul să accepte cheia de tip AQ. ocolind bug-ul bibliotecii
         os.environ["GEMINI_API_KEY"] = cheie_finala
         genai.configure()
         client = genai
