@@ -1,10 +1,10 @@
-# =====================================================================
-# ⚙️ FIȘIER CENTRALIZAT PENTRU MONETIZARE (DOAR BANNERE)
-# =====================================================================
+# -------------------------------------------------------------
+# FIȘIER CENTRALIZAT PENTRU MONETIZARE (DOAR BANNER)
+# -------------------------------------------------------------
 
 COD_CLIENT_ADSENSE = "ca-pub-3528838516008000"
 ID_BANNER_SIDEBAR = "9294641909"
-ID_BANNER_FINAL = "2371850766"  
+ID_BANNER_FINAL = "2371850766"
 
 def genereaza_html_banner(slot_id, latime="auto", inaltime="auto"):
     return f"""
@@ -16,7 +16,7 @@ def genereaza_html_banner(slot_id, latime="auto", inaltime="auto"):
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
         <script>
-        (adsbygoogle = window.adsbygoogle || []).push({{}});
+             (adsbygoogle = window.adsbygoogle || []).push({{}});
         </script>
     </div>
     """
