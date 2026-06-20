@@ -1,12 +1,51 @@
+import os
 import streamlit as st
 
-# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
-st.set_page_config(page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide")
+# =====================================================================
+# INTERCEPTARE DIRECTĂ ADS.TXT LA NIVEL DE SERVER (FASTAPI/STARLETTE)
+# =====================================================================
+if os.environ.get("RENDER"):
+    try:
+        from streamlit.web.server.server import Server
 
-# 🔍 INTERCEPTARE ȘI AFIȘARE DIRECTĂ ADS.TXT PENTRU GOOGLE
-if "X-Recompute-For" in st.context.headers or "ads.txt" in st.context.cookies or "ads.txt" in st.query_params:
-    st.text("google.com, pub-3528838516008000, DIRECT, f08c47fec0942fa0")
-    st.stop()
+        def patch_server():
+            server = Server.get_current()
+            if server and server._app:
+
+                async def ads_txt_middleware(scope, receive, send):
+                    if scope["type"] == "http" and scope["path"] == "/ads.txt":
+                        payload = b"google.com, pub-3528838516008800, DIRECT, f08c47fec8942fa0"
+                        await send(
+                            {
+                                "type": "http.response.start",
+                                "status": 200,
+                                "headers": [(b"content-type", b"text/plain")],
+                            }
+                        )
+                        await send(
+                            {
+                                "type": "http.response.body",
+                                "body": payload,
+                            }
+                        )
+                        return
+                    await server._app(scope, receive, send)
+
+                server._app = ads_txt_middleware
+
+        patch_server()
+    except Exception:
+        pass
+
+# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie Streamlit apelată)
+st.set_page_config(
+    page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide"
+)
+
+# =====================================================================
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
+# =====================================================================
+# ... de aici în jos lași codul tău exact așa cum era (Licență, Limbi, Pagini)
 
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
