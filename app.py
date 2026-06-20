@@ -1,69 +1,7 @@
 import os
 import streamlit as st
 
-# 1. CONFIGURARE APLICAȚIE
-st.set_page_config(
-    page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide"
-)
-
-# 🌐 INJECTARE COD DE VERIFICARE GOOGLE ADSENSE
-st.markdown(
-    """
-    <meta name="google-adsense-account" content="ca-pub-3528838516008000">
-    """,
-    unsafe_allow_html=True,
-)
-
-# =====================================================================
-# RUTA DIRECTĂ PENTRU GOOGLE ADSENSE (COMPATIBILĂ CU VERSIUNILE NOI)
-# =====================================================================
-if os.environ.get("RENDER"):
-    try:
-        import asyncio
-        from streamlit.web.server.server import Server
-
-        def aplica_patch_ads():
-            try:
-                server = Server.get_current()
-                if server and hasattr(server, "_main_ops") and server._main_ops:
-                    # Pentru versiunile extrem de noi de Streamlit
-                    app = server._main_ops
-                elif server and hasattr(server, "_app") and server._app:
-                    # Pentru versiunile intermediare
-                    app = server._app
-                else:
-                    return
-
-                old_app = app
-
-                async def middleware_ads(scope, receive, send):
-                    if scope["type"] == "http" and scope["path"] == "/ads.txt":
-                        continut = b"google.com, pub-3528838516008000, DIRECT, f08c47fec8942fa0"
-                        await send(
-                            {
-                                "type": "http.response.start",
-                                "status": 200,
-                                "headers": [(b"content-type", b"text/plain")],
-                            }
-                        )
-                        await send(
-                            {"type": "http.response.body", "body": continut}
-                        )
-                        return
-                    await old_app(scope, receive, send)
-
-                if hasattr(server, "_main_ops"):
-                    server._main_ops = middleware_ads
-                else:
-                    server._app = middleware_ads
-            except:
-                pass
-
-        aplica_patch_ads()
-    except:
-        pass
-
-# 1. CONFIGURARE APLICAȚIE
+# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
 st.set_page_config(
     page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide"
 )
@@ -71,11 +9,8 @@ st.set_page_config(
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
 # =====================================================================
-# ... de aici în jos lași codul tău exact așa cum era (Licență, Limbi, Pagini)
+# ... restul codului tău neschimbat ...
 
-# =====================================================================
-# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
-# =====================================================================
 SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_LIAK_STUDIO_ASIST_SCUT_2026"
 try:
     with open(__file__, "r", encoding="utf-8") as f:
