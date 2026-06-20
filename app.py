@@ -38,7 +38,7 @@ if os.environ.get("RENDER"):
 
                 async def middleware_ads(scope, receive, send):
                     if scope["type"] == "http" and scope["path"] == "/ads.txt":
-                        continut = b"google.com, pub-3528838516008800, DIRECT, f08c47fec8942fa0"
+                        continut = b"google.com, pub-3528838516008000, DIRECT, f08c47fec8942fa0"
                         await send(
                             {
                                 "type": "http.response.start",
