@@ -8,6 +8,5 @@ def ads_txt(request):
 
 
 urlpatterns = [
-    # ... rutele tale existente ...
     path("ads.txt", ads_txt),
 ]
