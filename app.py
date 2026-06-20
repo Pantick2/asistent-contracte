@@ -1,6 +1,19 @@
 import os
 import streamlit as st
 
+# 1. CONFIGURARE APLICAȚIE
+st.set_page_config(
+    page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide"
+)
+
+# 🌐 INJECTARE COD DE VERIFICARE GOOGLE ADSENSE
+st.markdown(
+    """
+    <meta name="google-adsense-account" content="ca-pub-3528838516008800">
+    """,
+    unsafe_allow_html=True,
+)
+
 # =====================================================================
 # RUTA DIRECTĂ PENTRU GOOGLE ADSENSE (COMPATIBILĂ CU VERSIUNILE NOI)
 # =====================================================================
