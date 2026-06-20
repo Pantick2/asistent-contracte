@@ -1,15 +1,74 @@
 import os
 import streamlit as st
 
-# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie absolută)
+# =====================================================================
+# INTERCEPTARE NATIVĂ TORNADO PENTRU GOOGLE ADSENSE
+# =====================================================================
+try:
+    from streamlit.web.server.server import Server
+    import tornado.web
+
+    class AdsTxtHandler(tornado.web.RequestHandler):
+
+        def get(self):
+            self.set_header("Content-Type", "text/plain; charset=utf-8")
+            self.write(
+                "google.com, pub-3528838516008000, DIRECT, f08c47fec8942fa0"
+            )
+
+
+    def adauga_ruta_ads():
+        server = Server.get_current()
+        if server and hasattr(server, "_app") and server._app:
+            # Injectăm ruta direct în aplicația Tornado existentă
+            server._app.add_handlers(
+                r".*", [(r"/ads.txt", AdsTxtHandler)]
+            )
+        elif (
+            server
+            and hasattr(server, "_main_ops")
+            and hasattr(server._main_ops, "add_handlers")
+        ):
+            server._main_ops.add_handlers(
+                r".*", [(r"/ads.txt", AdsTxtHandler)]
+            )
+
+
+    # Rulăm injectarea rutei imediat ce serverul devine disponibil
+    import threading
+
+    def pornire_intarziata():
+        import time
+
+        time.sleep(2)
+        try:
+            from streamlit.runtime import runtime
+
+            if runtime.exists():
+                st.sdk.main.get_instance()._run_on_server(
+                    adauga_ruta_ads
+                )  # Alternativă sigură de execuție pe buclă
+        except:
+            try:
+                adauga_ruta_ads()
+            except:
+                pass
+
+
+    threading.Thread(target=pornire_intarziata, daemon=True).start()
+except:
+    pass
+
+# 1. CONFIGURARE APLICAȚIE (Trebuie să rămână prima linie activă din Streamlit)
 st.set_page_config(
     page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide"
 )
 
 # =====================================================================
-# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVĂ)
+# 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVELY)
 # =====================================================================
-# ... restul codului tău neschimbat ...
+# ... restul codului tău cu licența și meniurile din screenshot continuă neschimbat aici ...
+
 
 SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_LIAK_STUDIO_ASIST_SCUT_2026"
 try:
