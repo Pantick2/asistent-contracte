@@ -9,7 +9,7 @@ st.set_page_config(
 # 🌐 INJECTARE COD DE VERIFICARE GOOGLE ADSENSE
 st.markdown(
     """
-    <meta name="google-adsense-account" content="ca-pub-3528838516008800">
+    <meta name="google-adsense-account" content="ca-pub-3528838516008000">
     """,
     unsafe_allow_html=True,
 )
