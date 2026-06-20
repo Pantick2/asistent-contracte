@@ -2,19 +2,30 @@ import os
 import streamlit as st
 
 # =====================================================================
-# INTERCEPTARE DIRECTĂ ADS.TXT LA NIVEL DE SERVER (FASTAPI/STARLETTE)
+# RUTA DIRECTĂ PENTRU GOOGLE ADSENSE (COMPATIBILĂ CU VERSIUNILE NOI)
 # =====================================================================
 if os.environ.get("RENDER"):
     try:
+        import asyncio
         from streamlit.web.server.server import Server
 
-        def patch_server():
-            server = Server.get_current()
-            if server and server._app:
+        def aplica_patch_ads():
+            try:
+                server = Server.get_current()
+                if server and hasattr(server, "_main_ops") and server._main_ops:
+                    # Pentru versiunile extrem de noi de Streamlit
+                    app = server._main_ops
+                elif server and hasattr(server, "_app") and server._app:
+                    # Pentru versiunile intermediare
+                    app = server._app
+                else:
+                    return
 
-                async def ads_txt_middleware(scope, receive, send):
+                old_app = app
+
+                async def middleware_ads(scope, receive, send):
                     if scope["type"] == "http" and scope["path"] == "/ads.txt":
-                        payload = b"google.com, pub-3528838516008800, DIRECT, f08c47fec8942fa0"
+                        continut = b"google.com, pub-3528838516008800, DIRECT, f08c47fec8942fa0"
                         await send(
                             {
                                 "type": "http.response.start",
@@ -23,21 +34,23 @@ if os.environ.get("RENDER"):
                             }
                         )
                         await send(
-                            {
-                                "type": "http.response.body",
-                                "body": payload,
-                            }
+                            {"type": "http.response.body", "body": continut}
                         )
                         return
-                    await server._app(scope, receive, send)
+                    await old_app(scope, receive, send)
 
-                server._app = ads_txt_middleware
+                if hasattr(server, "_main_ops"):
+                    server._main_ops = middleware_ads
+                else:
+                    server._app = middleware_ads
+            except:
+                pass
 
-        patch_server()
-    except Exception:
+        aplica_patch_ads()
+    except:
         pass
 
-# 1. CONFIGURARE APLICAȚIE (Trebuie să fie prima linie Streamlit apelată)
+# 1. CONFIGURARE APLICAȚIE
 st.set_page_config(
     page_title="Contract Negotiation Assistant", page_icon="📄", layout="wide"
 )
