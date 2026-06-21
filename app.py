@@ -2,16 +2,17 @@ import inject_adsense  # <--- ACEASTA TREBUIE SĂ FIE PRIMA LINIE!
 import streamlit as st
 import os
 
-# Restul aplicației tale...
+# --- INJECTARE COD DE VERIFICARE GOOGLE ADSENSE ---
+st.components.v1.html(
+    """
+    <script async src="https://googlesyndication.com"
+     crossorigin="anonymous"></script>
+    """,
+    height=0,
+    width=0
+)
+# # Restul aplicației tale continuă de aici în jos...
 
-# =====================================================================
-# INTERCEPTARE NATIVĂ TORNADO PENTRU GOOGLE ADSENSE
-# =====================================================================
-try:
-    from streamlit.web.server.server import Server
-    import tornado.web
-
-    class AdsTxtHandler(tornado.web.RequestHandler):
 
         def get(self):
             self.set_header("Content-Type", "text/plain; charset=utf-8")
