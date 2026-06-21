@@ -12,6 +12,7 @@ st.components.v1.html(
     width=0
 )
 
+
 # -------------------------------------------------------------
 # RESTUL APLICAȚIEI TALE CONTINUĂ DE AICI ÎN JOS (de la vechea linie 34)
 # -------------------------------------------------------------
