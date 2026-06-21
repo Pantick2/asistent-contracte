@@ -1,5 +1,8 @@
-import os
+import inject_adsense  # <--- ACEASTA TREBUIE SĂ FIE PRIMA LINIE!
 import streamlit as st
+import os
+
+# Restul aplicației tale...
 
 # =====================================================================
 # INTERCEPTARE NATIVĂ TORNADO PENTRU GOOGLE ADSENSE
