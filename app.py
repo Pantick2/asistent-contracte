@@ -11,31 +11,10 @@ st.components.v1.html(
     height=0,
     width=0
 )
-# # Restul aplicației tale continuă de aici în jos...
 
-
-        def get(self):
-            self.set_header("Content-Type", "text/plain; charset=utf-8")
-            self.write(
-                "google.com, pub-3528838516008000, DIRECT, f08c47fec8942fa0"
-            )
-
-
-    def adauga_ruta_ads():
-        server = Server.get_current()
-        if server and hasattr(server, "_app") and server._app:
-            # Injectăm ruta direct în aplicația Tornado existentă
-            server._app.add_handlers(
-                r".*", [(r"/ads.txt", AdsTxtHandler)]
-            )
-        elif (
-            server
-            and hasattr(server, "_main_ops")
-            and hasattr(server._main_ops, "add_handlers")
-        ):
-            server._main_ops.add_handlers(
-                r".*", [(r"/ads.txt", AdsTxtHandler)]
-            )
+# -------------------------------------------------------------
+# RESTUL APLICAȚIEI TALE CONTINUĂ DE AICI ÎN JOS (de la vechea linie 34)
+# -------------------------------------------------------------
 
 
     # Rulăm injectarea rutei imediat ce serverul devine disponibil
