@@ -11,35 +11,6 @@ st.components.v1.html(
     height=0,
     width=0
 )
-# -------------------------------------------------------------
-# RESTUL APLICAȚIEI TALE CONTINUĂ DE AICI ÎN JOS (de la vechea linie 34)
-# -------------------------------------------------------------
-
-
-    # Rulăm injectarea rutei imediat ce serverul devine disponibil
-    import threading
-
-    def pornire_intarziata():
-        import time
-
-        time.sleep(2)
-        try:
-            from streamlit.runtime import runtime
-
-            if runtime.exists():
-                st.sdk.main.get_instance()._run_on_server(
-                    adauga_ruta_ads
-                )  # Alternativă sigură de execuție pe buclă
-        except:
-            try:
-                adauga_ruta_ads()
-            except:
-                pass
-
-
-    threading.Thread(target=pornire_intarziata, daemon=True).start()
-except:
-    pass
 
 # 1. CONFIGURARE APLICAȚIE (Trebuie să rămână prima linie activă din Streamlit)
 st.set_page_config(
@@ -49,9 +20,6 @@ st.set_page_config(
 # =====================================================================
 # 🔒 SISTEM ANTIFURT ȘI VERIFICARE INTEGRITATE (LICENȚĂ EXCLUSIVELY)
 # =====================================================================
-# ... restul codului tău cu licența și meniurile din screenshot continuă neschimbat aici ...
-
-
 SEMNATURA_OBLIGATORIE = "IULIAN_ICHIM_UNGUREANU_ALIAS_LIAK_STUDIO_ASIST_SCUT_2026"
 try:
     with open(__file__, "r", encoding="utf-8") as f:
@@ -79,7 +47,7 @@ st.session_state["limba"] = "EN" if "English" in optiune_limba else "RO"
 # =====================================================================
 st.sidebar.markdown("---")
 text_buton_donatie = "☕ Donate" if st.session_state["limba"] == "EN" else "☕ Donatie"
-st.sidebar.link_button(text_buton_donatie, "https://linktr.ee", type="primary")
+st.sidebar.link_button(text_buton_donatie, "https://linktr.ee/safescanallergyscan?utm_source=linktree_profile_share&ltsid=f2eebc0e-3fda-49e2-bdfe-f76824b0bf6b", type="primary")
 st.sidebar.markdown("---")
 
 # =====================================================================
